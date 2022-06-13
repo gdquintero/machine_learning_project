@@ -20,10 +20,6 @@ from sklearn.svm import SVC
 
 warnings.filterwarnings('ignore')
 
-
-# In[2]:
-
-
 def print_frequency(y_train,y_test,kind='Validation'):
     unique, counts = np.unique(y_train, return_counts=True)
     uniquet, countst = np.unique(y_test, return_counts=True)
@@ -39,9 +35,6 @@ def print_frequency(y_train,y_test,kind='Validation'):
     plt.xlabel('Class')
     plt.ylabel('Frequency')
     plt.show()
-
-
-# In[3]:
 
 
 (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
@@ -64,11 +57,7 @@ sprite = {
 
 labels = ["%s" % i for i in range(10)]
 
-print_frequency(y_train,y_test,kind='Test')
-
-
-# In[4]:
-
+#print_frequency(y_train,y_test,kind='Test')
 
 fig, ax = plt.subplots(2, 4, figsize = (12, 6))
 ran = random.randrange(100)
@@ -79,10 +68,7 @@ for i in range(8):
     ax[i//4, i%4].set_title("Class %d: %s" 
                             %(y_train[i+ran],sprite[y_train[i+ran]]))
     
-plt.show()
-
-
-# In[5]:
+#plt.show()
 
 
 normalizer = np.amax(x_train).astype('float32')
@@ -93,17 +79,14 @@ x_test = (x_train/normalizer).astype('float32')
 x_train = np.reshape(x_train,(60000,28*28))
 x_test = np.reshape(x_test,(60000,28*28))
 
-print("X_train: Max = ",np.amax(x_train)," Min = ",np.amin(x_train))
-print("X_test: Max = ",np.amax(x_test)," Min = ",np.amin(x_test))
+# print("X_train: Max = ",np.amax(x_train)," Min = ",np.amin(x_train))
+# print("X_test: Max = ",np.amax(x_test)," Min = ",np.amin(x_test))
 
-print(x_train.shape)
-print(x_test.shape)
+# print(x_train.shape)
+# print(x_test.shape)
 
 
 # ## 1. Preparacao do dataset
-
-# In[6]:
-
 
 N, d = x_train.shape
 index = np.arange(N)
@@ -111,14 +94,10 @@ index = np.arange(N)
 x_Dtrain,x_Dval,y_Dtrain,y_Dval,index_Dtrain,index_Dval = \
 train_test_split(x_train,y_train,index,train_size=0.80,random_state=4,stratify=y_train)
 
-print_frequency(y_Dtrain,y_Dval)
+#print_frequency(y_Dtrain,y_Dval)
 
 
 # ## 2. Choosing a baseline
-
-# ### 2.1. Logistic Regression
-
-# In[10]:
 
 
 #Logistic Regression
