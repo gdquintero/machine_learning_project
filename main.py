@@ -129,20 +129,20 @@ u, c_y_dtrain = np.unique(y_Dtrain, return_counts=True)
 
 #SVM
 
-model_SVM = SVC()
-kernel_SVM = ['linear','rbf']
-c_values_SVM = [100.0, 50.0, 10.0, 5.0, 1.0, 0.1, 0.01] 
-grid_SVM = dict(kernel=kernel_SVM,C=c_values_SVM,random_state=[4])
+# model_SVM = SVC()
+# kernel_SVM = ['linear','rbf']
+# c_values_SVM = [100.0, 50.0, 10.0, 5.0, 1.0, 0.1, 0.01] 
+# grid_SVM = dict(kernel=kernel_SVM,C=c_values_SVM,random_state=[4])
 
-time_SVM = time.time()
-grid_search_SVM = GridSearchCV(estimator=model_SVM, param_grid=grid_SVM, scoring='accuracy',verbose=3, 
-            cv=skl.model_selection.StratifiedKFold(n_splits=4,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
-grid_result_SVM = grid_search_SVM.fit(x_Dtrain, y_Dtrain) 
+# time_SVM = time.time()
+# grid_search_SVM = GridSearchCV(estimator=model_SVM, param_grid=grid_SVM, scoring='accuracy',verbose=3, 
+#             cv=skl.model_selection.StratifiedKFold(n_splits=4,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
+# grid_result_SVM = grid_search_SVM.fit(x_Dtrain, y_Dtrain) 
 
-time_SVM = time.time() - time_SVM
+# time_SVM = time.time() - time_SVM
 
 
-pd.DataFrame(grid_result_SVM.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
+# pd.DataFrame(grid_result_SVM.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
 
 
 
