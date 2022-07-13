@@ -3,12 +3,12 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 import pandas as pd
 import sklearn as skl
 import tensorflow as tf
 import os
 import time
-import random
 import warnings
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
@@ -23,6 +23,9 @@ print("Python version = ", __import__("platform").python_version())
 
 warnings.filterwarnings('ignore')
 
+r'''
+Função para plotar a frequência com que cada uma das classes aparece
+'''
 def print_frequency(y_train,y_test,kind='Validation'):
     unique, counts = np.unique(y_train, return_counts=True)
     uniquet, countst = np.unique(y_test, return_counts=True)
@@ -40,6 +43,9 @@ def print_frequency(y_train,y_test,kind='Validation'):
     plt.savefig('frequency.png')
     plt.show()
 
+r'''
+Funcao para montar a matriz de confusao
+'''
 def create_confusion_matrix (y_val, y_predict, score, vmax, model):
     cm = skl.metrics.confusion_matrix(y_val, y_predict)
 
@@ -50,7 +56,11 @@ def create_confusion_matrix (y_val, y_predict, score, vmax, model):
     all_sample_title = model+'\n\nAccuracy Score: {0}'.format(score)
     plt.title(all_sample_title, size = 15);
 
+r'''
+Carregamento dos dados
+'''
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.fashion_mnist.load_data()
+
 
 sprite = {
         0: 'T-shirt',
@@ -77,17 +87,17 @@ for i in range(8):
     ax[i//4, i%4].set_title("Class %d: %s" 
                             %(y_train[i],sprite[y_train[i]]))
     
-# plt.show()
+plt.savefig('plot.eps')
 
 
-x_train = (x_train/255.0).astype('float32').reshape((60000,28*28))
-x_test = (x_test/255.0).astype('float32').reshape((10000,28*28))
+# x_train = (x_train/255.0).astype('float32').reshape((60000,28*28))
+# x_test = (x_test/255.0).astype('float32').reshape((10000,28*28))
 
 
-N, d = x_train.shape
-index = np.arange(N)
+# N, d = x_train.shape
+# index = np.arange(N)
 
-x_Dtrain,D_val,y_Dtrain,y_Dval,index_Dtrain,index_Dval = train_test_split(x_train,y_train,index,train_size=0.80,random_state=4,stratify=y_train)
+# x_Dtrain,D_val,y_Dtrain,y_Dval,index_Dtrain,index_Dval = train_test_split(x_train,y_train,index,train_size=0.80,random_state=4,stratify=y_train)
 
 # print_frequency(y_Dtrain,y_Dval)
 
@@ -98,8 +108,8 @@ x_Dtrain,D_val,y_Dtrain,y_Dval,index_Dtrain,index_Dval = train_test_split(x_trai
 # print("Shape of D_val:    ", D_val.shape)
 # print("Shape of y_Dval:   ", y_Dval.shape)
 
-u, c_y_train = np.unique(y_train, return_counts=True)
-u, c_y_dtrain = np.unique(y_Dtrain, return_counts=True)
+# u, c_y_train = np.unique(y_train, return_counts=True)
+# u, c_y_dtrain = np.unique(y_Dtrain, return_counts=True)
 # print("Proportion of classes in y_train:  ", c_y_train[0:10]/len(y_train))
 # print()
 # print("Proportion of classes in y_Dtrain: ", c_y_dtrain[0:10]/len(y_Dtrain))
