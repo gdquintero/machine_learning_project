@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+from sqlite3 import Time
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -131,11 +132,11 @@ getFrequency(y_Dtrain,y_Dval,kind='Validation')
 
 #Logistic Regression
 print("\n---------------------------------")
-print("Ajuste usando Regressao Logistica")
+print("Ajuste do modelo usando Regressao Logistica")
 print("---------------------------------")
 model_lgreg = LogisticRegression()
 solvers_lgreg = ['newton-cg','lbfgs']
-c_values_lgreg = [10.0, 5.0, 1.0, 0.1, 0.01] 
+c_values_lgreg = [1.0, 0.1, 0.01] 
 grid_lgreg = dict(solver=solvers_lgreg,C=c_values_lgreg,random_state=[4])
 
 time_lgreg = time.time()
@@ -146,6 +147,8 @@ grid_result_lgreg = grid_search_lgreg.fit(x_Dtrain, y_Dtrain)
 time_lgreg = time.time() - time_lgreg
 
 pd.DataFrame(grid_result_lgreg.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
+
+print("\nTempo com Regressao Logistica: ", time_lgreg)
 
 #SVM
 
