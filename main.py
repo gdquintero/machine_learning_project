@@ -16,6 +16,9 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 
+print("------------------")
+print("Inicio do programa")
+print("------------------")
 print("Versao do Python: ", __import__("platform").python_version())
 print("Versao da biblioteca Numpy: ", np.__version__)
 print("Versao da biblioteca Matplotlib: ", np.__version__)
@@ -41,16 +44,27 @@ def getFrequency(y_train,y_test,kind=None):
     plt.xlabel('Class')
     plt.ylabel('Frequency')
     ax.set_xticks(classes)
-    ax.set_xticklabels(labels)
     ax.legend()
     fig.tight_layout()
-    plt.savefig(str(localPath) + '/frequency.png')
+
+    if kind == 'Test':
+        plt.savefig(str(localPath) + '/frequency.png')
+    else:
+        plt.savefig(str(localPath) + '/frequencyCV.png')
+
+def getImages(x_img,y_img):
+    ax = plt.subplots(2, 4, figsize = (12, 6))[1]
+
+    for i in range(8):
+        ax[i//4, i%4].imshow(x_img[i], cmap='gray')
+        ax[i//4, i%4].axis('off')
+        ax[i//4, i%4].set_title("Class %d: %s" %(y_img[i],sprite[y_img[i]]))
+    plt.savefig(str(localPath) + '/sprite.png')
     # plt.show()
 
 # Funcao para montar a matriz de confusao
 def getConfusionMatrix (y_val, y_predict, score, vmax, model):
     cm = skl.metrics.confusion_matrix(y_val, y_predict)
-
     plt.figure(figsize=(9,9))
     sns.heatmap(cm, annot=True, fmt='d', linewidths=.5, square = True, cmap = 'Blues_r',vmin=0,vmax=vmax);
     plt.ylabel('Actual label');
@@ -59,8 +73,14 @@ def getConfusionMatrix (y_val, y_predict, score, vmax, model):
     plt.title(all_sample_title, size = 15);
 
 # Carregamento dos dados
+print("\n-----------------------------------")
+print("Carregando o dataset: Fashion mnist")
+print("-----------------------------------")
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.fashion_mnist.load_data()
 
+print("Numero de amostras para treinamento: ",x_train.shape[0])
+print("Numero de amostras para teste: ",x_test.shape[0])
+print("Tamanha de cada amostra: ",x_train[0,:,:].shape," pixels de escala de cinza")
 
 sprite = {
         0: 'T-shirt',
@@ -75,31 +95,23 @@ sprite = {
         9: 'Ankle boot'
     }
 
-labels = ["%s" % i for i in range(10)]
-
 getFrequency(y_train,y_test,kind='Test')
+getImages(x_train,y_train)
 
-fig, ax = plt.subplots(2, 4, figsize = (12, 6))
+# Normalizacao
+x_train = (x_train/255.0).astype('float32').reshape((60000,28*28))
+x_test = (x_test/255.0).astype('float32').reshape((10000,28*28))
 
-for i in range(8):
-    ax[i//4, i%4].imshow(x_train[i], cmap='gray')
-    ax[i//4, i%4].axis('off')
-    ax[i//4, i%4].set_title("Class %d: %s" 
-                            %(y_train[i],sprite[y_train[i]]))
-    
-# plt.savefig('plot.eps')
+N, d = x_train.shape
+index = np.arange(N)
 
+# Dividindo o conjunto de treinamento para a CV
+print("\n---------------------------------------------")
+print("Dividindo o conjunto de treinamento para a CV")
+print("---------------------------------------------")
+x_Dtrain,D_val,y_Dtrain,y_Dval,index_Dtrain,index_Dval = train_test_split(x_train,y_train,index,train_size=0.80,random_state=4,stratify=y_train)
 
-# x_train = (x_train/255.0).astype('float32').reshape((60000,28*28))
-# x_test = (x_test/255.0).astype('float32').reshape((10000,28*28))
-
-
-# N, d = x_train.shape
-# index = np.arange(N)
-
-# x_Dtrain,D_val,y_Dtrain,y_Dval,index_Dtrain,index_Dval = train_test_split(x_train,y_train,index,train_size=0.80,random_state=4,stratify=y_train)
-
-# print_frequency(y_Dtrain,y_Dval)
+getFrequency(y_Dtrain,y_Dval,kind='Validation')
 
 # print("Shape of X_train:  ", x_train.shape)
 # print("Shape of y_train:  ", y_train.shape)
