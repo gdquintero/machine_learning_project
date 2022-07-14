@@ -111,14 +111,11 @@ print("Dividindo o conjunto de treinamento para a CV")
 print("---------------------------------------------")
 x_Dtrain,D_val,y_Dtrain,y_Dval,index_Dtrain,index_Dval = train_test_split(x_train,y_train,index,train_size=0.80,random_state=4,stratify=y_train)
 
+print("Numero de amostras para treinamento: ",x_Dtrain.shape[0])
+print("Numero de amostras para validacao: ",D_val.shape[0])
+
 getFrequency(y_Dtrain,y_Dval,kind='Validation')
 
-# print("Shape of X_train:  ", x_train.shape)
-# print("Shape of y_train:  ", y_train.shape)
-# print("Shape of x_Dtrain:  ", x_Dtrain.shape)
-# print("Shape of y_Dtrain: ", y_Dtrain.shape)
-# print("Shape of D_val:    ", D_val.shape)
-# print("Shape of y_Dval:   ", y_Dval.shape)
 
 # u, c_y_train = np.unique(y_train, return_counts=True)
 # u, c_y_dtrain = np.unique(y_Dtrain, return_counts=True)
@@ -132,22 +129,23 @@ getFrequency(y_Dtrain,y_Dval,kind='Validation')
 # print("Sum of proportions in y_train = ", sum(c_y_train[0:10]/len(y_train)))
 
 
+#Logistic Regression
+print("\n---------------------------------")
+print("Ajuste usando Regressao Logistica")
+print("---------------------------------")
+model_lgreg = LogisticRegression()
+solvers_lgreg = ['newton-cg','lbfgs']
+c_values_lgreg = [10.0, 5.0, 1.0, 0.1, 0.01] 
+grid_lgreg = dict(solver=solvers_lgreg,C=c_values_lgreg,random_state=[4])
 
-# #Logistic Regression
+time_lgreg = time.time()
+grid_search_lgreg = GridSearchCV(estimator=model_lgreg, param_grid=grid_lgreg, scoring='accuracy',verbose=3, 
+            cv=skl.model_selection.StratifiedKFold(n_splits=2,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
+grid_result_lgreg = grid_search_lgreg.fit(x_Dtrain, y_Dtrain) 
 
-# model_lgreg = LogisticRegression()
-# solvers_lgreg = ['newton-cg','lbfgs']
-# c_values_lgreg = [100.0, 50.0, 10.0, 5.0, 1.0, 0.1, 0.01] 
-# grid_lgreg = dict(solver=solvers_lgreg,C=c_values_lgreg,random_state=[4])
+time_lgreg = time.time() - time_lgreg
 
-# time_lgreg = time.time()
-# grid_search_lgreg = GridSearchCV(estimator=model_lgreg, param_grid=grid_lgreg, scoring='accuracy',verbose=3, 
-#             cv=skl.model_selection.StratifiedKFold(n_splits=4,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
-# grid_result_lgreg = grid_search_lgreg.fit(x_Dtrain, y_Dtrain) 
-
-# time_lgreg = time.time() - time_lgreg
-
-# pd.DataFrame(grid_result_lgreg.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
+pd.DataFrame(grid_result_lgreg.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
 
 #SVM
 
