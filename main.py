@@ -148,7 +148,7 @@ time_lgreg = time.time() - time_lgreg
 
 pd.DataFrame(grid_result_lgreg.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
 
-print("\nTempo com Regressao Logistica: ",int(time_lgreg),"segundos ou",int(time_lgreg/60) minutos)
+print("\nTempo com Regressao Logistica: ",int(time_lgreg),"segundos ou",int(time_lgreg/60),"minutos")
 
 #SVM
 
