@@ -122,11 +122,12 @@ print("\n-------------------------------------------")
 print("Ajuste do modelo usando Regressao Logistica")
 print("-------------------------------------------")
 model_lgreg = LogisticRegression()
-solvers_lgreg = ['newton-cg','lbfgs']
+solvers_lgreg = ['lbfgs']
 c_values_lgreg = [0.01] 
 grid_lgreg = dict(solver=solvers_lgreg,C=c_values_lgreg,random_state=[4])
 
 time_lgreg = time.time()
+
 grid_search_lgreg = GridSearchCV(estimator=model_lgreg, param_grid=grid_lgreg, scoring='accuracy',verbose=3, 
             cv=skl.model_selection.StratifiedKFold(n_splits=2,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
 grid_result_lgreg = grid_search_lgreg.fit(x_Dtrain, y_Dtrain) 
@@ -137,6 +138,7 @@ time_lgreg = time.time() - time_lgreg
 
 print("\nTempo de execucao: ",int(time_lgreg),"segundos ou",round(time_lgreg/60,2),"minutos")
 
+print(type(grid_result_lgreg))
 
 
 
