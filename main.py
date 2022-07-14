@@ -9,44 +9,46 @@ import sklearn as skl
 import tensorflow as tf
 import os
 import time
+import pathlib
 import warnings
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 
-print("Numpy version = ", np.__version__)
-print("Tensorflow version = ", tf.__version__)
-print("Sklearn version = ", skl.__version__)
-print("Pandas version = ", pd.__version__)
-print("Python version = ", __import__("platform").python_version())
+print("Versao do Python: ", __import__("platform").python_version())
+print("Versao da biblioteca Numpy: ", np.__version__)
+print("Versao da biblioteca Matplotlib: ", np.__version__)
+print("Versao da biblioteca Pandas: ", pd.__version__)
+print("Versao da biblioteca Seaborn: ", np.__version__)
+print("Versao da biblioteca Tensorflow: ", tf.__version__)
+print("Versao da biblioteca Scikit-learn: ", skl.__version__)
 
 warnings.filterwarnings('ignore')
 
-r'''
-Função para plotar a frequência com que cada uma das classes aparece
-'''
-def print_frequency(y_train,y_test,kind='Validation'):
-    unique, counts = np.unique(y_train, return_counts=True)
-    uniquet, countst = np.unique(y_test, return_counts=True)
+# Caminho do main.py
+localPath = pathlib.Path(__file__).parent.resolve()
 
+# Função para plotar a frequência com que cada uma das classes aparece
+def getFrequency(y_train,y_test,kind=None):
+    classes, countTrain = np.unique(y_train, return_counts=True)
+    countTest = np.unique(y_test, return_counts=True)[1]
+    width = 0.3 # the width of the bars
     fig, ax = plt.subplots()
-    rects1 = ax.bar(unique - 0.2, counts, 0.25, label='Treinamento')
-    rects2 = ax.bar(unique + 0.2, countst, 0.25, label=kind)
-    ax.legend()
-    ax.set_xticks(unique)
+    ax.bar(classes - width/2, countTrain, width, label='Train')
+    ax.bar(classes + width/2, countTest, width, label=kind)
+    plt.title('Fashion MNIST')
+    plt.xlabel('Class')
+    plt.ylabel('Frequency')
+    ax.set_xticks(classes)
     ax.set_xticklabels(labels)
+    ax.legend()
+    fig.tight_layout()
+    plt.savefig(str(localPath) + '/frequency.png')
+    # plt.show()
 
-    plt.title('Dataset Fashion MNIST')
-    plt.xlabel('Clase')
-    plt.ylabel('Frequência')
-    plt.savefig('frequency.png')
-    plt.show()
-
-r'''
-Funcao para montar a matriz de confusao
-'''
-def create_confusion_matrix (y_val, y_predict, score, vmax, model):
+# Funcao para montar a matriz de confusao
+def getConfusionMatrix (y_val, y_predict, score, vmax, model):
     cm = skl.metrics.confusion_matrix(y_val, y_predict)
 
     plt.figure(figsize=(9,9))
@@ -56,9 +58,7 @@ def create_confusion_matrix (y_val, y_predict, score, vmax, model):
     all_sample_title = model+'\n\nAccuracy Score: {0}'.format(score)
     plt.title(all_sample_title, size = 15);
 
-r'''
-Carregamento dos dados
-'''
+# Carregamento dos dados
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.fashion_mnist.load_data()
 
 
@@ -77,7 +77,7 @@ sprite = {
 
 labels = ["%s" % i for i in range(10)]
 
-# print_frequency(y_train,y_test,kind='Teste')
+getFrequency(y_train,y_test,kind='Test')
 
 fig, ax = plt.subplots(2, 4, figsize = (12, 6))
 
@@ -87,7 +87,7 @@ for i in range(8):
     ax[i//4, i%4].set_title("Class %d: %s" 
                             %(y_train[i],sprite[y_train[i]]))
     
-plt.savefig('plot.eps')
+# plt.savefig('plot.eps')
 
 
 # x_train = (x_train/255.0).astype('float32').reshape((60000,28*28))
