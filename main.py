@@ -16,6 +16,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
+from sklearn.neural_network import MLPClassifier
 
 print("------------------")
 print("Inicio do programa")
@@ -32,6 +33,16 @@ warnings.filterwarnings('ignore')
 
 # Caminho do main.py
 localPath = pathlib.Path(__file__).parent.resolve()
+
+def table(dataFrame,n):
+    with open('out.txt','w') as f:
+        for i in range(n):
+            C = dataFrame.at[i,'params']['C']
+            solver = dataFrame.at[i,'params']['solver']
+            mScore = dataFrame.at[i,'mean_test_score']
+            f.write("%i %s %3.2f %s %s %s %1.4f %s" % (i+1,'&',C,'&',solver,'&',mScore,'\\\\\n'))
+    print("\n")
+    f.close()
 
 # Função para plotar a frequência com que cada uma das classes aparece
 def getFrequency(y_train,y_test,kind=None):
@@ -53,6 +64,7 @@ def getFrequency(y_train,y_test,kind=None):
     else:
         plt.savefig(str(localPath) + '/frequencyCV.png')
 
+# Funcao para printar as primeiras 8 imagens do dataset
 def getImages(x_img,y_img):
     ax = plt.subplots(2, 4, figsize = (12, 6))[1]
 
@@ -61,21 +73,85 @@ def getImages(x_img,y_img):
         ax[i//4, i%4].axis('off')
         ax[i//4, i%4].set_title("Class %d: %s" %(y_img[i],sprite[y_img[i]]))
     plt.savefig(str(localPath) + '/sprite.png')
-    # plt.show()
 
 # Funcao para montar a matriz de confusao
 def getConfusionMatrix (y_val, y_predict, score, vmax, model):
     cm = skl.metrics.confusion_matrix(y_val, y_predict)
     plt.figure(figsize=(9,9))
-    sns.heatmap(cm, annot=True, fmt='d', linewidths=.5, square = True, cmap = 'Blues_r',vmin=0,vmax=vmax);
-    plt.ylabel('Actual label');
-    plt.xlabel('Predicted label');
+    sns.heatmap(cm, annot=True, fmt='d', linewidths=.5, square = True, cmap = 'Blues_r',vmin=0,vmax=vmax)
+    plt.ylabel('Actual label')
+    plt.xlabel('Predicted label')
     all_sample_title = model+'\n\nAccuracy Score: {0}'.format(score)
-    plt.title(all_sample_title, size = 15);
+    plt.title(all_sample_title, size = 15)
+    plt.savefig(str(localPath) + '/confusionmatrix.png')
+
+def test1(trainSize):
+        # Dividindo o conjunto de treinamento para a CV
+    print("\nDividindo o conjunto de treinamento para a CV")
+    print("---------------------------------------------")
+    x_Dtrain,D_val,y_Dtrain,y_Dval,index_Dtrain,index_Dval = train_test_split(x_train,y_train,index,train_size=trainSize,random_state=4,stratify=y_train)
+
+    print("Numero de amostras para treinamento: ",x_Dtrain.shape[0])
+    print("Numero de amostras para validacao: ",D_val.shape[0])
+
+    getFrequency(y_Dtrain,y_Dval,kind='Validation')
+
+    #Logistic Regression
+    print("\nAjuste do modelo usando Regressao Logistica")
+    print("-------------------------------------------")
+    model_lgreg = LogisticRegression()
+    solvers_lgreg = ['lbfgs']
+    rowTable = len(solvers_lgreg)
+    c_values_lgreg = [0.01] 
+    rowTable = rowTable * len(c_values_lgreg)
+    grid_lgreg = dict(solver=solvers_lgreg,C=c_values_lgreg,random_state=[4])
+
+    time_lgreg = time.time()
+
+    grid_search_lgreg = GridSearchCV(estimator=model_lgreg, param_grid=grid_lgreg, scoring='accuracy',verbose=3, 
+                cv=skl.model_selection.StratifiedKFold(n_splits=2,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
+    grid_result_lgreg = grid_search_lgreg.fit(x_Dtrain, y_Dtrain) 
+    df = pd.DataFrame(grid_result_lgreg.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
+
+    time_lgreg = time.time() - time_lgreg
+
+    print("\nTempo de execucao: ",int(time_lgreg),"segundos ou",round(time_lgreg/60,2),"minutos")
+
+    #SVM
+    # print("\nAjuste do modelo usando SVM")
+    # print("--------------------------------")
+    # model_SVM = SVC()
+    # kernel_SVM = ['sigmoid']
+    # c_values_SVM = [100.0] 
+    # grid_SVM = dict(kernel=kernel_SVM,C=c_values_SVM,random_state=[4])
+
+    # time_SVM = time.time()
+    # grid_search_SVM = GridSearchCV(estimator=model_SVM, param_grid=grid_SVM, scoring='accuracy',verbose=3, 
+    #             cv=skl.model_selection.StratifiedKFold(n_splits=2,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
+    # grid_result_SVM = grid_search_SVM.fit(x_Dtrain, y_Dtrain) 
+
+    # time_SVM = time.time() - time_SVM
+
+    # print("Tempo total de execucao: ",time_lgreg + time_SVM)
+
+    # y_Dval_predict_lgreg = grid_result_lgreg.predict(D_val)
+    # y_Dval_predict_SVM   = grid_result_SVM.predict(D_val)
+
+    # score_Dval_lgreg = grid_result_lgreg.score(D_val,y_Dval)
+    # score_Dval_SVM   = grid_result_SVM.score(D_val,y_Dval)
+
+    # # getConfusionMatrix(y_Dval, y_Dval_predict_lgreg, score_Dval_lgreg, 2000,'Logistic Regression')
+    # # getConfusionMatrix(y_Dval, y_Dval_predict_SVM, score_Dval_SVM, 2000, 'SVM')
+
+    # final_model            = grid_result_lgreg if score_Dval_lgreg > score_Dval_SVM else grid_result_SVM
+    # # score_Dval_final_model = score_Dval_lgreg  if score_Dval_lgreg > score_Dval_SVM else score_Dval_SVM
+
+    # final_model = final_model.best_estimator_
+    # print("Best model is: ", final_model)
+    
 
 # Carregamento dos dados
-print("\n-----------------------------------")
-print("Carregando o dataset: Fashion mnist")
+print("\nCarregando o dataset: Fashion mnist")
 print("-----------------------------------")
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.fashion_mnist.load_data()
 
@@ -106,42 +182,7 @@ x_test = (x_test/255.0).astype('float32').reshape((10000,28*28))
 N, d = x_train.shape
 index = np.arange(N)
 
-# Dividindo o conjunto de treinamento para a CV
-print("\n---------------------------------------------")
-print("Dividindo o conjunto de treinamento para a CV")
-print("---------------------------------------------")
-x_Dtrain,D_val,y_Dtrain,y_Dval,index_Dtrain,index_Dval = train_test_split(x_train,y_train,index,train_size=0.80,random_state=4,stratify=y_train)
-
-print("Numero de amostras para treinamento: ",x_Dtrain.shape[0])
-print("Numero de amostras para validacao: ",D_val.shape[0])
-
-getFrequency(y_Dtrain,y_Dval,kind='Validation')
-
-#Logistic Regression
-print("\n-------------------------------------------")
-print("Ajuste do modelo usando Regressao Logistica")
-print("-------------------------------------------")
-model_lgreg = LogisticRegression()
-solvers_lgreg = ['lbfgs']
-c_values_lgreg = [0.01] 
-grid_lgreg = dict(solver=solvers_lgreg,C=c_values_lgreg,random_state=[4])
-
-time_lgreg = time.time()
-
-grid_search_lgreg = GridSearchCV(estimator=model_lgreg, param_grid=grid_lgreg, scoring='accuracy',verbose=3, 
-            cv=skl.model_selection.StratifiedKFold(n_splits=2,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
-grid_result_lgreg = grid_search_lgreg.fit(x_Dtrain, y_Dtrain) 
-
-time_lgreg = time.time() - time_lgreg
-
-# pd.DataFrame(grid_result_lgreg.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
-
-print("\nTempo de execucao: ",int(time_lgreg),"segundos ou",round(time_lgreg/60,2),"minutos")
-
-print(type(grid_result_lgreg))
-
-
-
-
-
-
+print("\n-------------------")
+print("Execucao do teste 1")
+print("-------------------")
+test1(0.80)
