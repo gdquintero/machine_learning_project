@@ -133,7 +133,7 @@ grid_result_lgreg = grid_search_lgreg.fit(x_Dtrain, y_Dtrain)
 
 time_lgreg = time.time() - time_lgreg
 
-pd.DataFrame(grid_result_lgreg.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
+# pd.DataFrame(grid_result_lgreg.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
 
 print("\nTempo de execucao: ",int(time_lgreg),"segundos ou",round(time_lgreg/60,2),"minutos")
 
