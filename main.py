@@ -117,26 +117,13 @@ print("Numero de amostras para validacao: ",D_val.shape[0])
 
 getFrequency(y_Dtrain,y_Dval,kind='Validation')
 
-
-# u, c_y_train = np.unique(y_train, return_counts=True)
-# u, c_y_dtrain = np.unique(y_Dtrain, return_counts=True)
-# print("Proportion of classes in y_train:  ", c_y_train[0:10]/len(y_train))
-# print()
-# print("Proportion of classes in y_Dtrain: ", c_y_dtrain[0:10]/len(y_Dtrain))
-# print()
-# print("Differences in proportions of classes in y_train and y_Dtrain: ", 
-#       np.abs(c_y_train[0:10]/len(y_train) - c_y_dtrain[0:10]/len(y_Dtrain)))
-# print()
-# print("Sum of proportions in y_train = ", sum(c_y_train[0:10]/len(y_train)))
-
-
 #Logistic Regression
 print("\n-------------------------------------------")
 print("Ajuste do modelo usando Regressao Logistica")
 print("-------------------------------------------")
 model_lgreg = LogisticRegression()
 solvers_lgreg = ['newton-cg','lbfgs']
-c_values_lgreg = [1.0, 0.1, 0.01] 
+c_values_lgreg = [0.01] 
 grid_lgreg = dict(solver=solvers_lgreg,C=c_values_lgreg,random_state=[4])
 
 time_lgreg = time.time()
@@ -148,24 +135,9 @@ time_lgreg = time.time() - time_lgreg
 
 pd.DataFrame(grid_result_lgreg.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
 
-print("\nTempo com Regressao Logistica: ",int(time_lgreg),"segundos ou",round(time_lgreg/60,2),"minutos")
-
-#SVM
-
-# model_SVM = SVC()
-# kernel_SVM = ['linear','rbf']
-# c_values_SVM = [100.0, 50.0, 10.0, 5.0, 1.0, 0.1, 0.01] 
-# grid_SVM = dict(kernel=kernel_SVM,C=c_values_SVM,random_state=[4])
-
-# time_SVM = time.time()
-# grid_search_SVM = GridSearchCV(estimator=model_SVM, param_grid=grid_SVM, scoring='accuracy',verbose=3, 
-#             cv=skl.model_selection.StratifiedKFold(n_splits=4,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
-# grid_result_SVM = grid_search_SVM.fit(x_Dtrain, y_Dtrain) 
-
-# time_SVM = time.time() - time_SVM
+print("\nTempo de execucao: ",int(time_lgreg),"segundos ou",round(time_lgreg/60,2),"minutos")
 
 
-# pd.DataFrame(grid_result_SVM.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
 
 
 
