@@ -131,9 +131,9 @@ getFrequency(y_Dtrain,y_Dval,kind='Validation')
 
 
 #Logistic Regression
-print("\n---------------------------------")
+print("\n-------------------------------------------")
 print("Ajuste do modelo usando Regressao Logistica")
-print("---------------------------------")
+print("-------------------------------------------")
 model_lgreg = LogisticRegression()
 solvers_lgreg = ['newton-cg','lbfgs']
 c_values_lgreg = [1.0, 0.1, 0.01] 
@@ -148,7 +148,7 @@ time_lgreg = time.time() - time_lgreg
 
 pd.DataFrame(grid_result_lgreg.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
 
-print("\nTempo com Regressao Logistica: ", time_lgreg)
+print("\nTempo com Regressao Logistica: ",int(time_lgreg),"segundos ou",int(time_lgreg/60) minutos)
 
 #SVM
 
