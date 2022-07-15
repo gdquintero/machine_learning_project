@@ -33,18 +33,43 @@ warnings.filterwarnings('ignore')
 # Caminho do main.py
 localPath = pathlib.Path(__file__).parent.resolve()
 
-def export(yVal,yPred,dataFrame,n):
-    with open('latex.txt','w') as f:
-        for i in range(n):
-            C = dataFrame.at[i,'params']['C']
-            solver = dataFrame.at[i,'params']['solver']
-            mScore = dataFrame.at[i,'mean_test_score']
+def export(test,yVal,yPredLR,yPredSVM,dataFrameLR,dataFrameSVM,nLR,nSVM):
+    with open('test'+str(test),'w') as f:
+        f.write("%s %i\n" % ('Test ',test))
+        f.write("\n")
+        f.write("Melhores scores Regressao Logistica:\n")
+        for i in range(nLR):
+            C = dataFrameLR.at[i,'params']['C']
+            solver = dataFrameLR.at[i,'params']['solver']
+            mScore = dataFrameLR.at[i,'mean_test_score']
             f.write("%i %s %3.2f %s %s %s %1.4f %s" % (i+1,'&',C,'&',solver,'&',mScore,'\\\\\n'))
+        f.write("\n")
+
+        f.write("Matriz de custo Regressao Logistica:\n")
+        cm = skl.metrics.confusion_matrix(yVal,yPredSVM)
+        for i in range(10):
+            f.write("%i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s" \
+            % (cm[i,0],'&',cm[i,1],'&',cm[i,2],'&',cm[i,3],'&',cm[i,4],'&',cm[i,5],'&',cm[i,6], \
+            '&',cm[i,7],'&',cm[i,8],'&',cm[i,9],'\\\\\n'))
+
+        f.write("\n")
+        f.write("Melhores scores SVM:\n")
+        for i in range(nSVM):
+            C = dataFrameSVM.at[i,'params']['C']
+            solver = dataFrameSVM.at[i,'params']['kernel']
+            mScore = dataFrameSVM.at[i,'mean_test_score']
+            f.write("%i %s %3.2f %s %s %s %1.4f %s" % (i+1,'&',C,'&',solver,'&',mScore,'\\\\\n'))
+        f.write("\n")
+
+        f.write("Matriz de custo SVM:\n")
+        cm = skl.metrics.confusion_matrix(yVal,yPredLR)
+        for i in range(10):
+            f.write("%i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s" \
+            % (cm[i,0],'&',cm[i,1],'&',cm[i,2],'&',cm[i,3],'&',cm[i,4],'&',cm[i,5],'&',cm[i,6], \
+            '&',cm[i,7],'&',cm[i,8],'&',cm[i,9],'\\\\\n'))
+        f.write("\n")
+
     f.close()
-
-    cm = skl.metrics.confusion_matrix(yVal, yPred)
-
-    print(cm)
 
 # Função para plotar a frequência com que cada uma das classes aparece
 def getFrequency(y_train,y_test,kind=None):
@@ -103,9 +128,9 @@ def test1(trainSize):
     print("-------------------------------------------")
     modelLR = LogisticRegression()
     solversLR = ['lbfgs']
-    rowTable = len(solversLR)
+    rowTableLR = len(solversLR)
     cLR = [0.01] 
-    rowTable = rowTable * len(cLR)
+    rowTableLR = rowTableLR * len(cLR)
     gridLR = dict(solver=solversLR,C=cLR,random_state=[4])
 
     timeLR = time.time()
@@ -113,51 +138,53 @@ def test1(trainSize):
     gridSearchLR = GridSearchCV(estimator=modelLR, param_grid=gridLR, scoring='accuracy',verbose=3, 
                 cv=skl.model_selection.StratifiedKFold(n_splits=2,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
     gridResultLR = gridSearchLR.fit(x_Dtrain, y_Dtrain) 
-    df = pd.DataFrame(gridResultLR.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
+    dfLR = pd.DataFrame(gridResultLR.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
 
     timeLR = time.time() - timeLR
 
     print("\nTempo de execucao RL: ",int(timeLR),"segundos ou",round(timeLR/60,2),"minutos")
 
     #SVM
-    # print("\nAjuste do modelo usando SVM")
-    # print("--------------------------------")
-    # modelSVM = SVC()
-    # kernelSVM = ['sigmoid']
-    # cSVM = [100.0] 
-    # gridSVM = dict(kernel=kernelSVM,C=cSVM,random_state=[4])
+    print("\nAjuste do modelo usando SVM")
+    print("--------------------------------")
+    modelSVM = SVC()
+    kernelSVM = ['sigmoid']
+    rowTableSVM = len(kernelSVM)
+    cSVM = [100.0] 
+    rowTableSVM = rowTableSVM * len(cSVM)
+    gridSVM = dict(kernel=kernelSVM,C=cSVM,random_state=[4])
 
-    # timeSVM = time.time()
-    # gridSearchSVM = GridSearchCV(estimator=modelSVM, param_grid=gridSVM, scoring='accuracy',verbose=3, 
-    #             cv=skl.model_selection.StratifiedKFold(n_splits=2,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
-    # gridResultSVM = gridSearchSVM.fit(x_Dtrain, y_Dtrain) 
+    timeSVM = time.time()
+    gridSearchSVM = GridSearchCV(estimator=modelSVM, param_grid=gridSVM, scoring='accuracy',verbose=3, 
+                cv=skl.model_selection.StratifiedKFold(n_splits=2,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
+    gridResultSVM = gridSearchSVM.fit(x_Dtrain, y_Dtrain) 
+    dfSVM = pd.DataFrame(gridResultSVM.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
+    timeSVM = time.time() - timeSVM
 
-    # timeSVM = time.time() - timeSVM
+    print("\nTempo de execucao SVM: ",int(timeSVM),"segundos ou",round(timeSVM/60,2),"minutos")
 
-    # print("\nTempo de execucao SVM: ",int(timeSVM),"segundos ou",round(timeSVM/60,2),"minutos")
-
-    # print("\nTempo total de execucao: ",timeLR + timeSVM)
+    print("\nTempo total de execucao: ",int(timeLR + timeSVM), "segundos ou ",int(timeLR + timeSVM)/60)
 
     yDvalPredLR = gridResultLR.predict(D_val)
-    # y_Dval_predict_SVM   = gridResultSVM.predict(D_val)
+    yDvalPredSVM   = gridResultSVM.predict(D_val)
 
     scoreDvalLR = gridResultLR.score(D_val,y_Dval)
-    # score_Dval_SVM   = gridResultSVM.score(D_val,y_Dval)
+    scoreDvalSVM = gridResultSVM.score(D_val,y_Dval)
 
-    export(y_Dval,yDvalPredLR,df,rowTable)
+    export(1,y_Dval,yDvalPredLR,yDvalPredSVM,dfLR,dfSVM,rowTableLR,rowTableSVM)
 
     # # getConfusionMatrix(y_Dval, y_Dval_predict_lgreg, score_Dval_lgreg, 2000,'Logistic Regression')
     # # getConfusionMatrix(y_Dval, y_Dval_predict_SVM, score_Dval_SVM, 2000, 'SVM')
 
     # if score_Dval_lgreg > score_Dval_SVM:
-    #     final_model = gridResultLR
+    #     finalModel = gridResultLR
     # else:
-    #     final_model = gridResultSVM
+    #     finalModel = gridResultSVM
 
-    # # score_Dval_final_model = score_Dval_lgreg  if score_Dval_lgreg > score_Dval_SVM else score_Dval_SVM
+    # # score_Dval_finalModel = score_Dval_lgreg  if score_Dval_lgreg > score_Dval_SVM else score_Dval_SVM
 
-    # final_model = final_model.best_estimator_
-    # print("O melhor modelo e: ", final_model)
+    # finalModel = finalModel.best_estimator_
+    # print("O melhor modelo e: ", finalModel)
     
 
 # Carregamento dos dados
