@@ -44,6 +44,8 @@ def export(yVal,yPred,dataFrame,n):
 
     cm = skl.metrics.confusion_matrix(yVal, yPred)
 
+    print(cm)
+
 # Função para plotar a frequência com que cada uma das classes aparece
 def getFrequency(y_train,y_test,kind=None):
     classes, countTrain = np.unique(y_train, return_counts=True)
