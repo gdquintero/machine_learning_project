@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from sqlite3 import Time
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -34,15 +33,16 @@ warnings.filterwarnings('ignore')
 # Caminho do main.py
 localPath = pathlib.Path(__file__).parent.resolve()
 
-def export(dataFrame,n):
+def export(yVal,yPred,dataFrame,n):
     with open('latex.txt','w') as f:
         for i in range(n):
             C = dataFrame.at[i,'params']['C']
             solver = dataFrame.at[i,'params']['solver']
             mScore = dataFrame.at[i,'mean_test_score']
             f.write("%i %s %3.2f %s %s %s %1.4f %s" % (i+1,'&',C,'&',solver,'&',mScore,'\\\\\n'))
-    print("\n")
     f.close()
+
+    cm = skl.metrics.confusion_matrix(yVal, yPred)
 
 # Função para plotar a frequência com que cada uma das classes aparece
 def getFrequency(y_train,y_test,kind=None):
@@ -99,59 +99,63 @@ def test1(trainSize):
     #Logistic Regression
     print("\nAjuste do modelo usando Regressao Logistica")
     print("-------------------------------------------")
-    model_lgreg = LogisticRegression()
-    solvers_lgreg = ['lbfgs']
-    rowTable = len(solvers_lgreg)
-    c_values_lgreg = [0.01] 
-    rowTable = rowTable * len(c_values_lgreg)
-    grid_lgreg = dict(solver=solvers_lgreg,C=c_values_lgreg,random_state=[4])
+    modelLR = LogisticRegression()
+    solversLR = ['lbfgs']
+    rowTable = len(solversLR)
+    cLR = [0.01] 
+    rowTable = rowTable * len(cLR)
+    gridLR = dict(solver=solversLR,C=cLR,random_state=[4])
 
-    time_lgreg = time.time()
+    timeLR = time.time()
 
-    grid_search_lgreg = GridSearchCV(estimator=model_lgreg, param_grid=grid_lgreg, scoring='accuracy',verbose=3, 
+    gridSearchLR = GridSearchCV(estimator=modelLR, param_grid=gridLR, scoring='accuracy',verbose=3, 
                 cv=skl.model_selection.StratifiedKFold(n_splits=2,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
-    grid_result_lgreg = grid_search_lgreg.fit(x_Dtrain, y_Dtrain) 
-    df = pd.DataFrame(grid_result_lgreg.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
+    gridResultLR = gridSearchLR.fit(x_Dtrain, y_Dtrain) 
+    df = pd.DataFrame(gridResultLR.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
 
-    time_lgreg = time.time() - time_lgreg
+    timeLR = time.time() - timeLR
 
-    print("\nTempo de execucao: ",int(time_lgreg),"segundos ou",round(time_lgreg/60,2),"minutos")
+    print("\nTempo de execucao RL: ",int(timeLR),"segundos ou",round(timeLR/60,2),"minutos")
 
     #SVM
-    print("\nAjuste do modelo usando SVM")
-    print("--------------------------------")
-    model_SVM = SVC()
-    kernel_SVM = ['sigmoid']
-    c_values_SVM = [100.0] 
-    grid_SVM = dict(kernel=kernel_SVM,C=c_values_SVM,random_state=[4])
+    # print("\nAjuste do modelo usando SVM")
+    # print("--------------------------------")
+    # modelSVM = SVC()
+    # kernelSVM = ['sigmoid']
+    # cSVM = [100.0] 
+    # gridSVM = dict(kernel=kernelSVM,C=cSVM,random_state=[4])
 
-    time_SVM = time.time()
-    grid_search_SVM = GridSearchCV(estimator=model_SVM, param_grid=grid_SVM, scoring='accuracy',verbose=3, 
-                cv=skl.model_selection.StratifiedKFold(n_splits=2,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
-    grid_result_SVM = grid_search_SVM.fit(x_Dtrain, y_Dtrain) 
+    # timeSVM = time.time()
+    # gridSearchSVM = GridSearchCV(estimator=modelSVM, param_grid=gridSVM, scoring='accuracy',verbose=3, 
+    #             cv=skl.model_selection.StratifiedKFold(n_splits=2,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
+    # gridResultSVM = gridSearchSVM.fit(x_Dtrain, y_Dtrain) 
 
-    time_SVM = time.time() - time_SVM
+    # timeSVM = time.time() - timeSVM
 
-    print("Tempo total de execucao: ",time_lgreg + time_SVM)
+    # print("\nTempo de execucao SVM: ",int(timeSVM),"segundos ou",round(timeSVM/60,2),"minutos")
 
-    y_Dval_predict_lgreg = grid_result_lgreg.predict(D_val)
-    y_Dval_predict_SVM   = grid_result_SVM.predict(D_val)
+    # print("\nTempo total de execucao: ",timeLR + timeSVM)
 
-    score_Dval_lgreg = grid_result_lgreg.score(D_val,y_Dval)
-    score_Dval_SVM   = grid_result_SVM.score(D_val,y_Dval)
+    yDvalPredLR = gridResultLR.predict(D_val)
+    # y_Dval_predict_SVM   = gridResultSVM.predict(D_val)
 
-    # getConfusionMatrix(y_Dval, y_Dval_predict_lgreg, score_Dval_lgreg, 2000,'Logistic Regression')
-    # getConfusionMatrix(y_Dval, y_Dval_predict_SVM, score_Dval_SVM, 2000, 'SVM')
+    scoreDvalLR = gridResultLR.score(D_val,y_Dval)
+    # score_Dval_SVM   = gridResultSVM.score(D_val,y_Dval)
 
-    if score_Dval_lgreg > score_Dval_SVM:
-        final_model = grid_result_lgreg
-    else:
-        final_model = grid_result_SVM
+    export(y_Dval,yDvalPredLR,df,rowTable)
 
-    # score_Dval_final_model = score_Dval_lgreg  if score_Dval_lgreg > score_Dval_SVM else score_Dval_SVM
+    # # getConfusionMatrix(y_Dval, y_Dval_predict_lgreg, score_Dval_lgreg, 2000,'Logistic Regression')
+    # # getConfusionMatrix(y_Dval, y_Dval_predict_SVM, score_Dval_SVM, 2000, 'SVM')
 
-    final_model = final_model.best_estimator_
-    print("Best model is: ", final_model)
+    # if score_Dval_lgreg > score_Dval_SVM:
+    #     final_model = gridResultLR
+    # else:
+    #     final_model = gridResultSVM
+
+    # # score_Dval_final_model = score_Dval_lgreg  if score_Dval_lgreg > score_Dval_SVM else score_Dval_SVM
+
+    # final_model = final_model.best_estimator_
+    # print("O melhor modelo e: ", final_model)
     
 
 # Carregamento dos dados
