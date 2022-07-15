@@ -34,8 +34,8 @@ warnings.filterwarnings('ignore')
 # Caminho do main.py
 localPath = pathlib.Path(__file__).parent.resolve()
 
-def table(dataFrame,n):
-    with open('out.txt','w') as f:
+def export(dataFrame,n):
+    with open('latex.txt','w') as f:
         for i in range(n):
             C = dataFrame.at[i,'params']['C']
             solver = dataFrame.at[i,'params']['solver']
@@ -118,36 +118,40 @@ def test1(trainSize):
     print("\nTempo de execucao: ",int(time_lgreg),"segundos ou",round(time_lgreg/60,2),"minutos")
 
     #SVM
-    # print("\nAjuste do modelo usando SVM")
-    # print("--------------------------------")
-    # model_SVM = SVC()
-    # kernel_SVM = ['sigmoid']
-    # c_values_SVM = [100.0] 
-    # grid_SVM = dict(kernel=kernel_SVM,C=c_values_SVM,random_state=[4])
+    print("\nAjuste do modelo usando SVM")
+    print("--------------------------------")
+    model_SVM = SVC()
+    kernel_SVM = ['sigmoid']
+    c_values_SVM = [100.0] 
+    grid_SVM = dict(kernel=kernel_SVM,C=c_values_SVM,random_state=[4])
 
-    # time_SVM = time.time()
-    # grid_search_SVM = GridSearchCV(estimator=model_SVM, param_grid=grid_SVM, scoring='accuracy',verbose=3, 
-    #             cv=skl.model_selection.StratifiedKFold(n_splits=2,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
-    # grid_result_SVM = grid_search_SVM.fit(x_Dtrain, y_Dtrain) 
+    time_SVM = time.time()
+    grid_search_SVM = GridSearchCV(estimator=model_SVM, param_grid=grid_SVM, scoring='accuracy',verbose=3, 
+                cv=skl.model_selection.StratifiedKFold(n_splits=2,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
+    grid_result_SVM = grid_search_SVM.fit(x_Dtrain, y_Dtrain) 
 
-    # time_SVM = time.time() - time_SVM
+    time_SVM = time.time() - time_SVM
 
-    # print("Tempo total de execucao: ",time_lgreg + time_SVM)
+    print("Tempo total de execucao: ",time_lgreg + time_SVM)
 
-    # y_Dval_predict_lgreg = grid_result_lgreg.predict(D_val)
-    # y_Dval_predict_SVM   = grid_result_SVM.predict(D_val)
+    y_Dval_predict_lgreg = grid_result_lgreg.predict(D_val)
+    y_Dval_predict_SVM   = grid_result_SVM.predict(D_val)
 
-    # score_Dval_lgreg = grid_result_lgreg.score(D_val,y_Dval)
-    # score_Dval_SVM   = grid_result_SVM.score(D_val,y_Dval)
+    score_Dval_lgreg = grid_result_lgreg.score(D_val,y_Dval)
+    score_Dval_SVM   = grid_result_SVM.score(D_val,y_Dval)
 
-    # # getConfusionMatrix(y_Dval, y_Dval_predict_lgreg, score_Dval_lgreg, 2000,'Logistic Regression')
-    # # getConfusionMatrix(y_Dval, y_Dval_predict_SVM, score_Dval_SVM, 2000, 'SVM')
+    # getConfusionMatrix(y_Dval, y_Dval_predict_lgreg, score_Dval_lgreg, 2000,'Logistic Regression')
+    # getConfusionMatrix(y_Dval, y_Dval_predict_SVM, score_Dval_SVM, 2000, 'SVM')
 
-    # final_model            = grid_result_lgreg if score_Dval_lgreg > score_Dval_SVM else grid_result_SVM
-    # # score_Dval_final_model = score_Dval_lgreg  if score_Dval_lgreg > score_Dval_SVM else score_Dval_SVM
+    if score_Dval_lgreg > score_Dval_SVM:
+        final_model = grid_result_lgreg
+    else:
+        final_model = grid_result_SVM
 
-    # final_model = final_model.best_estimator_
-    # print("Best model is: ", final_model)
+    # score_Dval_final_model = score_Dval_lgreg  if score_Dval_lgreg > score_Dval_SVM else score_Dval_SVM
+
+    final_model = final_model.best_estimator_
+    print("Best model is: ", final_model)
     
 
 # Carregamento dos dados
