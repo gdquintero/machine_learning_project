@@ -40,3 +40,12 @@ Precisao Ein test:  0.83439992
 Precisao Eout test:  0.84955473 
 kappa test:  0.83580000 
 kappa validacao:  0.85075000 
+Re-treinamento:
+Score do modelo final:  0.83920000 
+Acuracia Ein test:  0.83920000 
+Acuracia Eout test:  0.16080000 
+Acuracia Ein validacao:  0.85875000 
+Precisao Ein test:  0.83794394 
+Precisao Eout test:  0.85779988 
+kappa test:  0.83920000 
+kappa validacao:  0.85875000 

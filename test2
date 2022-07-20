@@ -1,0 +1,51 @@
+Test  2
+
+Ordenacao dos scores Regressao Logistica:
+1 & 0.01 & lbfgs & 0.8425 \\
+
+Matriz de custo Regressao Logistica:
+627 & 390 & 145 & 50 & 16 & 3 & 77 & 0 & 192 & 0 \\
+60 & 1062 & 149 & 182 & 1 & 2 & 20 & 0 & 24 & 0 \\
+59 & 339 & 418 & 1 & 272 & 2 & 208 & 0 & 201 & 0 \\
+288 & 301 & 75 & 632 & 4 & 6 & 27 & 0 & 167 & 0 \\
+65 & 448 & 333 & 32 & 375 & 0 & 114 & 0 & 133 & 0 \\
+0 & 5 & 2 & 0 & 0 & 833 & 151 & 100 & 396 & 13 \\
+197 & 292 & 283 & 16 & 151 & 2 & 280 & 0 & 279 & 0 \\
+0 & 0 & 1 & 0 & 0 & 202 & 13 & 989 & 256 & 39 \\
+8 & 27 & 470 & 12 & 97 & 13 & 190 & 9 & 670 & 4 \\
+1 & 1 & 82 & 1 & 0 & 303 & 30 & 30 & 293 & 759 \\
+
+Score Regressao Logistica:  0.84946667
+Ordenacao dos scores SVM:
+1 & 100.00 & sigmoid & 0.3853 \\
+
+Matriz de custo SVM:
+1242 & 2 & 24 & 77 & 3 & 2 & 132 & 0 & 17 & 1 \\
+4 & 1436 & 20 & 30 & 2 & 0 & 7 & 0 & 1 & 0 \\
+23 & 2 & 1115 & 13 & 190 & 3 & 139 & 1 & 14 & 0 \\
+43 & 15 & 15 & 1324 & 57 & 0 & 37 & 1 & 7 & 1 \\
+4 & 3 & 136 & 62 & 1156 & 0 & 131 & 0 & 8 & 0 \\
+1 & 1 & 0 & 0 & 0 & 1361 & 1 & 84 & 16 & 36 \\
+220 & 7 & 174 & 54 & 142 & 2 & 879 & 0 & 22 & 0 \\
+0 & 0 & 0 & 0 & 0 & 57 & 0 & 1391 & 3 & 49 \\
+3 & 1 & 8 & 17 & 5 & 13 & 25 & 5 & 1420 & 3 \\
+1 & 0 & 0 & 0 & 0 & 23 & 0 & 58 & 0 & 1418 \\
+
+Score SVM:  0.44300000
+Score do modelo final:  0.83430000 
+Acuracia Ein test:  0.83430000 
+Acuracia Eout test:  0.16570000 
+Acuracia Ein validacao:  0.84946667 
+Precisao Ein test:  0.83285857 
+Precisao Eout test:  0.84825273 
+kappa test:  0.83430000 
+kappa validacao:  0.84946667 
+Re-treinamento:
+Score do modelo final:  0.83920000 
+Acuracia Ein test:  0.83920000 
+Acuracia Eout test:  0.16080000 
+Acuracia Ein validacao:  0.85880000 
+Precisao Ein test:  0.83794394 
+Precisao Eout test:  0.85782650 
+kappa test:  0.83920000 
+kappa validacao:  0.85880000 

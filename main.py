@@ -34,7 +34,7 @@ warnings.filterwarnings('ignore')
 # Caminho do main.py
 localPath = pathlib.Path(__file__).parent.resolve()
 
-def export(test,yVal,yPredLR,yPredSVM,dataFrameLR,dataFrameSVM,nLR,nSVM,outparam):
+def export(test,yVal,yPredLR,yPredSVM,yTest,testPredFinal,testPredFinalTotal,dataFrameLR,dataFrameSVM,nLR,nSVM,outparam):
     with open('test'+str(test),'w') as f:
         f.write("%s %i\n" % ('Test ',test))
         f.write("\n")
@@ -54,6 +54,7 @@ def export(test,yVal,yPredLR,yPredSVM,dataFrameLR,dataFrameSVM,nLR,nSVM,outparam
             '&',cm[i,7],'&',cm[i,8],'&',cm[i,9],'\\\\\n'))
         f.write("\n")
         f.write("%s %1.8f" % ("Score Regressao Logistica: ",outparam[0]))
+        f.write("%s %4.2f" % ("Tempo Regressao Logistia: ",times[0]))
 
         f.write("\n")
         f.write("Ordenacao dos scores SVM:\n")
@@ -72,6 +73,7 @@ def export(test,yVal,yPredLR,yPredSVM,dataFrameLR,dataFrameSVM,nLR,nSVM,outparam
             '&',cm[i,7],'&',cm[i,8],'&',cm[i,9],'\\\\\n'))
         f.write("\n")
         f.write("%s %1.8f" % ("Score SVM: ",outparam[1]))
+        f.write("%s %4.2f" % ("Tempo SVM: ",times[1]))
 
         f.write("\n")
         f.write("%s %1.8f %s" % ("Score do modelo final: ",outparam[2],"\n"))
@@ -82,7 +84,36 @@ def export(test,yVal,yPredLR,yPredSVM,dataFrameLR,dataFrameSVM,nLR,nSVM,outparam
         f.write("%s %1.8f %s" % ("Precisao Eout test: ",outparam[7],"\n"))
         f.write("%s %1.8f %s" % ("kappa test: ",outparam[8],"\n"))        
         f.write("%s %1.8f %s" % ("kappa validacao: ",outparam[9],"\n"))  
+        f.write("\n")
 
+        f.write("Matriz de custo modelo final:\n")
+        cm = skl.metrics.confusion_matrix(yTest,testPredFinal)
+        for i in range(10):
+            f.write("%i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s" \
+            % (cm[i,0],'&',cm[i,1],'&',cm[i,2],'&',cm[i,3],'&',cm[i,4],'&',cm[i,5],'&',cm[i,6], \
+            '&',cm[i,7],'&',cm[i,8],'&',cm[i,9],'\\\\\n'))
+        f.write("\n")
+
+        f.write("Re-treinamento:\n")
+        f.write("\n")
+
+        f.write("%s %1.8f %s" % ("Score do modelo final: ",outparam[10],"\n"))
+        f.write("%s %1.8f %s" % ("Acuracia Ein test: ",outparam[11],"\n"))
+        f.write("%s %1.8f %s" % ("Acuracia Eout test: ",outparam[12],"\n"))
+        f.write("%s %1.8f %s" % ("Acuracia Ein validacao: ",outparam[13],"\n"))
+        f.write("%s %1.8f %s" % ("Precisao Ein test: ",outparam[14],"\n"))
+        f.write("%s %1.8f %s" % ("Precisao Eout test: ",outparam[15],"\n"))
+        f.write("%s %1.8f %s" % ("kappa test: ",outparam[16],"\n"))        
+        f.write("%s %1.8f %s" % ("kappa validacao: ",outparam[17],"\n")) 
+        f.write("\n")
+
+        f.write("Matriz de custo modelo re-treinado:\n")
+        cm = skl.metrics.confusion_matrix(yTest,testPredFinalTotal)
+        for i in range(10):
+            f.write("%i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s" \
+            % (cm[i,0],'&',cm[i,1],'&',cm[i,2],'&',cm[i,3],'&',cm[i,4],'&',cm[i,5],'&',cm[i,6], \
+            '&',cm[i,7],'&',cm[i,8],'&',cm[i,9],'\\\\\n'))
+        f.write("\n")
 
     f.close()
 
@@ -116,18 +147,7 @@ def getImages(x_img,y_img):
         ax[i//4, i%4].set_title("Class %d: %s" %(y_img[i],sprite[y_img[i]]))
     plt.savefig(str(localPath) + '/sprite.png')
 
-# Funcao para montar a matriz de confusao
-def getConfusionMatrix (y_val, y_predict, score, vmax, model):
-    cm = skl.metrics.confusion_matrix(y_val, y_predict)
-    plt.figure(figsize=(9,9))
-    sns.heatmap(cm, annot=True, fmt='d', linewidths=.5, square = True, cmap = 'Blues_r',vmin=0,vmax=vmax)
-    plt.ylabel('Actual label')
-    plt.xlabel('Predicted label')
-    all_sample_title = model+'\n\nAccuracy Score: {0}'.format(score)
-    plt.title(all_sample_title, size = 15)
-    plt.savefig(str(localPath) + '/confusionmatrix.png')
-
-def test1(trainSize):
+def test(ntest,trainSize,x_train,y_train,x_test,y_test):
         # Dividindo o conjunto de treinamento para a CV
     print("\nDividindo o conjunto de treinamento para a CV")
     print("---------------------------------------------")
@@ -156,12 +176,13 @@ def test1(trainSize):
     dfLR = pd.DataFrame(gridResultLR.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
 
     timeLR = time.time() - timeLR
+    times[0] = timeLR
 
-    print("\nTempo de execucao RL: ",int(timeLR),"segundos ou",round(timeLR/60,2),"minutos")
+    print("\nTempo de execucao Regressao Logistica: ",int(timeLR),"segundos ou",round(timeLR/60,2),"minutos")
 
     #SVM
     print("\nAjuste do modelo usando SVM")
-    print("--------------------------------")
+    print("---------------------------")
     modelSVM = SVC()
     kernelSVM = ['sigmoid']
     rowTableSVM = len(kernelSVM)
@@ -175,10 +196,9 @@ def test1(trainSize):
     gridResultSVM = gridSearchSVM.fit(x_Dtrain, y_Dtrain) 
     dfSVM = pd.DataFrame(gridResultSVM.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
     timeSVM = time.time() - timeSVM
+    times[1] = timeSVM
 
     print("\nTempo de execucao SVM: ",int(timeSVM),"segundos ou",round(timeSVM/60,2),"minutos")
-
-    print("\nTempo total de execucao: ",int(timeLR + timeSVM), "segundos ou ",int(timeLR + timeSVM)/60,"minutos")
 
     yDvalPredLR = gridResultLR.predict(D_val)
     yDvalPredSVM   = gridResultSVM.predict(D_val)
@@ -206,32 +226,42 @@ def test1(trainSize):
     kappaTest = skl.metrics.recall_score(y_test,testPredictFinal,average='macro')
     kappaDval = skl.metrics.recall_score(y_Dval,DvalPredictFinal,average='macro')
 
-    print('Acurracia X_test  = ', EinTest)
-    print('E_out (X_test)   = ', EoutTest)
-    print('Acurracy D_val   = ', EinDval)
-    print('')
+    # Re-treinamento
+    finalModelTotal = finalModel.fit(x_train,y_train)
+    testPredictFinalTotal = finalModelTotal.predict(x_test)
+    DvalPredictFinalTotal = finalModelTotal.predict(D_val)
 
-    print('Precision X_test = ', EinTestPrecision)
-    print('Precision D_val  = ',EinDvalPrecision)
-    print('')
+    scorexTestFinalTotal = finalModelTotal.score(x_test,y_test)
+    testPredictFinalTotal = finalModelTotal.predict(x_test)
+    DvalPredictFinalTotal = finalModelTotal.predict(D_val)
+    EinTestTotal = skl.metrics.accuracy_score(y_test,testPredictFinalTotal)
+    EoutTestTotal = 1 - EinTestTotal
+    EinDvalTotal = skl.metrics.accuracy_score(y_Dval,DvalPredictFinalTotal)
+    EinTestPrecisionTotal = skl.metrics.precision_score(y_test,testPredictFinalTotal,average='macro')
+    EinDvalPrecisionTotal =  skl.metrics.precision_score(y_Dval,DvalPredictFinalTotal,average='macro')
+    kappaTestTotal = skl.metrics.recall_score(y_test,testPredictFinalTotal,average='macro')
+    kappaDvalTotal = skl.metrics.recall_score(y_Dval,DvalPredictFinalTotal,average='macro')
 
-    print('Recall X_test    = ', kappaTest)
-    print('Recall D_val     = ', kappaDval)
+    output[:] = [scoreDvalLR,scoreDvalSVM,scorexTestFinal,EinTest,EoutTest,EinDval,EinTestPrecision,\
+                EinDvalPrecision,kappaTest,kappaDval,scorexTestFinalTotal,EinTestTotal,EoutTestTotal,\
+                EinDvalTotal,EinTestPrecisionTotal,EinDvalPrecisionTotal,kappaTestTotal,kappaDvalTotal]
 
-
-    output[:] = [scoreDvalLR,scoreDvalSVM,scorexTestFinal,EinTest,EoutTest,EinDval,EinTestPrecision,EinDvalPrecision,kappaTest,kappaDval]
-
-    export(1,y_Dval,yDvalPredLR,yDvalPredSVM,dfLR,dfSVM,rowTableLR,rowTableSVM,output)
+    export(ntest,y_Dval,yDvalPredLR,yDvalPredSVM,y_test,testPredictFinal,testPredictFinalTotal,dfLR,dfSVM,rowTableLR,rowTableSVM,output)
     
 
+totalTime = time.time()
 # Carregamento dos dados
 print("\nCarregando o dataset: Fashion mnist")
 print("-----------------------------------")
-(x_train, y_train), (x_test, y_test) = tf.keras.datasets.fashion_mnist.load_data()
+(xTrain, yTrain), (xTest, yTest) = tf.keras.datasets.fashion_mnist.load_data()
 
-print("Numero de amostras para treinamento: ",x_train.shape[0])
-print("Numero de amostras para teste: ",x_test.shape[0])
-print("Tamanha de cada amostra: ",x_train[0,:,:].shape," pixels de escala de cinza")
+xTrainReduced = np.array([image[::2, 1::2] for image in xTrain])
+xTestReduced = np.array([image[::2, 1::2] for image in xTest])
+
+print("Numero de amostras para treinamento: ",xTrain.shape[0])
+print("Numero de amostras para teste: ",xTest.shape[0])
+print("Tamanho de cada amostra: ",xTrain[0,:,:].shape," pixels de escala de cinza")
+print("Tamanho de cada amostra reduzida: ",xTrainReduced[0,:,:].shape," pixels de escala de cinza")
 
 sprite = {
         0: 'T-shirt',
@@ -246,18 +276,59 @@ sprite = {
         9: 'Ankle boot'
     }
 
-getFrequency(y_train,y_test,kind='Test')
-getImages(x_train,y_train)
+getFrequency(yTrain,yTest,kind='Test')
+getImages(xTrain,yTrain)
 
 # Normalizacao
-x_train = (x_train/255.0).astype('float32').reshape((60000,28*28))
-x_test = (x_test/255.0).astype('float32').reshape((10000,28*28))
+xTrain = (xTrain/255.0).astype('float32').reshape((60000,28*28))
+xTest = (xTest/255.0).astype('float32').reshape((10000,28*28))
 
-N, d = x_train.shape
+xTrainReduced = (xTrainReduced/255.0).astype('float32').reshape((60000,14*14))
+xTestReduced = (xTestReduced/255.0).astype('float32').reshape((10000,14*14))
+
+N, d = xTrain.shape
 index = np.arange(N)
-output = np.empty(10)
+output = np.empty(18)
+times = np.zeros(2)
+testTimes = np.zeros(4)
 
+testTimes[0] = time.time()
 print("\n-------------------")
 print("Execucao do teste 1")
 print("-------------------")
-test1(0.80)
+test(1,0.80,xTrain,yTrain,xTest,yTest)
+testTimes[0] = time.time() - testTimes[0]
+
+testTimes[1] = time.time()
+print("\n-------------------")
+print("Execucao do teste 2")
+print("-------------------")
+test(2,0.75,xTrain,yTrain,xTest,yTest)
+testTimes[1] = time.time() - testTimes[1]
+
+testTimes[2] = time.time()
+print("\n-------------------")
+print("Execucao do teste 3")
+print("-------------------")
+test(3,0.80,xTrainReduced,yTrain,xTestReduced,yTest)
+testTimes[2] = time.time() - testTimes[2]
+
+testTimes[3] = time.time()
+print("\n-------------------")
+print("Execucao do teste 4")
+print("-------------------")
+test(4,0.75,xTrainReduced,yTrain,xTestReduced,yTest)
+testTimes[3] = time.time() - testTimes[3]
+
+totalTime = time.time() - totalTime
+
+print("Tempo total: ",round(totalTime/60,2)," minutos ou",round(totalTime/3600,2)," horas.")
+
+with open('totalTime','w') as f:
+    f.write("%s %4.2f" % ("Tempo do teste 1: ",testTimes[0]))
+    f.write("%s %4.2f" % ("Tempo do teste 2: ",testTimes[1]))
+    f.write("%s %4.2f" % ("Tempo do teste 3: ",testTimes[2]))
+    f.write("%s %4.2f" % ("Tempo do teste 4: ",testTimes[3]))
+    f.write("%s %4.2f" % ("Tempo total de todos os testes: ",totalTime))
+
+f.close()
