@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+from inspect import Parameter
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -33,11 +34,11 @@ warnings.filterwarnings('ignore')
 # Caminho do main.py
 localPath = pathlib.Path(__file__).parent.resolve()
 
-def export(test,yVal,yPredLR,yPredSVM,dataFrameLR,dataFrameSVM,nLR,nSVM):
+def export(test,yVal,yPredLR,yPredSVM,dataFrameLR,dataFrameSVM,nLR,nSVM,outparam):
     with open('test'+str(test),'w') as f:
         f.write("%s %i\n" % ('Test ',test))
         f.write("\n")
-        f.write("Melhores scores Regressao Logistica:\n")
+        f.write("Ordenacao dos scores Regressao Logistica:\n")
         for i in range(nLR):
             C = dataFrameLR.at[i,'params']['C']
             solver = dataFrameLR.at[i,'params']['solver']
@@ -51,9 +52,11 @@ def export(test,yVal,yPredLR,yPredSVM,dataFrameLR,dataFrameSVM,nLR,nSVM):
             f.write("%i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s" \
             % (cm[i,0],'&',cm[i,1],'&',cm[i,2],'&',cm[i,3],'&',cm[i,4],'&',cm[i,5],'&',cm[i,6], \
             '&',cm[i,7],'&',cm[i,8],'&',cm[i,9],'\\\\\n'))
+        f.write("\n")
+        f.write("%s %1.8f" % ("Score Regressao Logistica: ",outparam[0]))
 
         f.write("\n")
-        f.write("Melhores scores SVM:\n")
+        f.write("Ordenacao dos scores SVM:\n")
         for i in range(nSVM):
             C = dataFrameSVM.at[i,'params']['C']
             solver = dataFrameSVM.at[i,'params']['kernel']
@@ -68,6 +71,18 @@ def export(test,yVal,yPredLR,yPredSVM,dataFrameLR,dataFrameSVM,nLR,nSVM):
             % (cm[i,0],'&',cm[i,1],'&',cm[i,2],'&',cm[i,3],'&',cm[i,4],'&',cm[i,5],'&',cm[i,6], \
             '&',cm[i,7],'&',cm[i,8],'&',cm[i,9],'\\\\\n'))
         f.write("\n")
+        f.write("%s %1.8f" % ("Score SVM: ",outparam[1]))
+
+        f.write("\n")
+        f.write("%s %1.8f %s" % ("Score do modelo final: ",outparam[2],"\n"))
+        f.write("%s %1.8f %s" % ("Acuracia Ein test: ",outparam[3],"\n"))
+        f.write("%s %1.8f %s" % ("Acuracia Eout test: ",outparam[4],"\n"))
+        f.write("%s %1.8f %s" % ("Acuracia Ein validacao: ",outparam[5],"\n"))
+        f.write("%s %1.8f %s" % ("Precisao Ein test: ",outparam[6],"\n"))
+        f.write("%s %1.8f %s" % ("Precisao Eout test: ",outparam[7],"\n"))
+        f.write("%s %1.8f %s" % ("kappa test: ",outparam[8],"\n"))        
+        f.write("%s %1.8f %s" % ("kappa validacao: ",outparam[9],"\n"))  
+
 
     f.close()
 
@@ -163,7 +178,7 @@ def test1(trainSize):
 
     print("\nTempo de execucao SVM: ",int(timeSVM),"segundos ou",round(timeSVM/60,2),"minutos")
 
-    print("\nTempo total de execucao: ",int(timeLR + timeSVM), "segundos ou ",int(timeLR + timeSVM)/60)
+    print("\nTempo total de execucao: ",int(timeLR + timeSVM), "segundos ou ",int(timeLR + timeSVM)/60,"minutos")
 
     yDvalPredLR = gridResultLR.predict(D_val)
     yDvalPredSVM   = gridResultSVM.predict(D_val)
@@ -171,20 +186,42 @@ def test1(trainSize):
     scoreDvalLR = gridResultLR.score(D_val,y_Dval)
     scoreDvalSVM = gridResultSVM.score(D_val,y_Dval)
 
-    export(1,y_Dval,yDvalPredLR,yDvalPredSVM,dfLR,dfSVM,rowTableLR,rowTableSVM)
+    if scoreDvalLR > scoreDvalSVM:
+        finalModel = gridResultLR
+    else:
+        finalModel = gridResultSVM
 
-    # # getConfusionMatrix(y_Dval, y_Dval_predict_lgreg, score_Dval_lgreg, 2000,'Logistic Regression')
-    # # getConfusionMatrix(y_Dval, y_Dval_predict_SVM, score_Dval_SVM, 2000, 'SVM')
+    finalModel = finalModel.best_estimator_
+    print("O melhor modelo e: ", finalModel)
 
-    # if score_Dval_lgreg > score_Dval_SVM:
-    #     finalModel = gridResultLR
-    # else:
-    #     finalModel = gridResultSVM
+    # Testando o modelo final
+    scorexTestFinal = finalModel.score(x_test,y_test)
+    testPredictFinal = finalModel.predict(x_test)
+    DvalPredictFinal = finalModel.predict(D_val)
+    EinTest = skl.metrics.accuracy_score(y_test,testPredictFinal)
+    EoutTest = 1 - EinTest
+    EinDval = skl.metrics.accuracy_score(y_Dval,DvalPredictFinal)
+    EinTestPrecision = skl.metrics.precision_score(y_test,testPredictFinal,average='macro')
+    EinDvalPrecision =  skl.metrics.precision_score(y_Dval,DvalPredictFinal,average='macro')
+    kappaTest = skl.metrics.recall_score(y_test,testPredictFinal,average='macro')
+    kappaDval = skl.metrics.recall_score(y_Dval,DvalPredictFinal,average='macro')
 
-    # # score_Dval_finalModel = score_Dval_lgreg  if score_Dval_lgreg > score_Dval_SVM else score_Dval_SVM
+    print('Acurracia X_test  = ', EinTest)
+    print('E_out (X_test)   = ', EoutTest)
+    print('Acurracy D_val   = ', EinDval)
+    print('')
 
-    # finalModel = finalModel.best_estimator_
-    # print("O melhor modelo e: ", finalModel)
+    print('Precision X_test = ', EinTestPrecision)
+    print('Precision D_val  = ',EinDvalPrecision)
+    print('')
+
+    print('Recall X_test    = ', kappaTest)
+    print('Recall D_val     = ', kappaDval)
+
+
+    output[:] = [scoreDvalLR,scoreDvalSVM,scorexTestFinal,EinTest,EoutTest,EinDval,EinTestPrecision,EinDvalPrecision,kappaTest,kappaDval]
+
+    export(1,y_Dval,yDvalPredLR,yDvalPredSVM,dfLR,dfSVM,rowTableLR,rowTableSVM,output)
     
 
 # Carregamento dos dados
@@ -218,6 +255,7 @@ x_test = (x_test/255.0).astype('float32').reshape((10000,28*28))
 
 N, d = x_train.shape
 index = np.arange(N)
+output = np.empty(10)
 
 print("\n-------------------")
 print("Execucao do teste 1")
