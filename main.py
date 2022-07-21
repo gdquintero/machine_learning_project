@@ -297,6 +297,7 @@ print("Execucao do teste 1")
 print("-------------------")
 test(1,0.80,xTrain,yTrain,xTest,yTest)
 testTimes[0] = time.time() - testTimes[0]
+open('Teste_1_finalizado','w').close()
 
 testTimes[1] = time.time()
 print("\n-------------------")
@@ -304,6 +305,7 @@ print("Execucao do teste 2")
 print("-------------------")
 test(2,0.75,xTrain,yTrain,xTest,yTest)
 testTimes[1] = time.time() - testTimes[1]
+open('Teste_2_finalizado','w').close()
 
 testTimes[2] = time.time()
 print("\n-------------------")
@@ -311,6 +313,7 @@ print("Execucao do teste 3")
 print("-------------------")
 test(3,0.80,xTrainReduced,yTrain,xTestReduced,yTest)
 testTimes[2] = time.time() - testTimes[2]
+open('Teste_3_finalizado','w').close()
 
 testTimes[3] = time.time()
 print("\n-------------------")
@@ -318,6 +321,7 @@ print("Execucao do teste 4")
 print("-------------------")
 test(4,0.75,xTrainReduced,yTrain,xTestReduced,yTest)
 testTimes[3] = time.time() - testTimes[3]
+open('Teste_4_finalizado','w').close()
 
 totalTime = time.time() - totalTime
 
