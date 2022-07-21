@@ -152,6 +152,11 @@ def test(ntest,trainSize,x_train,y_train,x_test,y_test):
 
     getFrequency(y_Dtrain,y_Dval,kind='Validation')
 
+    if trainSize == 0.80:
+        splits = 4
+    else:
+        splits = 5
+
     #Logistic Regression
     print("\nAjuste do modelo usando Regressao Logistica")
     print("-------------------------------------------")
@@ -165,7 +170,7 @@ def test(ntest,trainSize,x_train,y_train,x_test,y_test):
     timeLR = time.time()
 
     gridSearchLR = GridSearchCV(estimator=modelLR, param_grid=gridLR, scoring='accuracy',verbose=3, 
-                cv=skl.model_selection.StratifiedKFold(n_splits=4,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
+                cv=skl.model_selection.StratifiedKFold(n_splits=splits,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
     gridResultLR = gridSearchLR.fit(x_Dtrain, y_Dtrain) 
     dfLR = pd.DataFrame(gridResultLR.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
 
@@ -186,7 +191,7 @@ def test(ntest,trainSize,x_train,y_train,x_test,y_test):
 
     timeSVM = time.time()
     gridSearchSVM = GridSearchCV(estimator=modelSVM, param_grid=gridSVM, scoring='accuracy',verbose=3, 
-                cv=skl.model_selection.StratifiedKFold(n_splits=4,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
+                cv=skl.model_selection.StratifiedKFold(n_splits=splits,random_state=4,shuffle=True).split(x_Dtrain,y_Dtrain))
     gridResultSVM = gridSearchSVM.fit(x_Dtrain, y_Dtrain) 
     dfSVM = pd.DataFrame(gridResultSVM.cv_results_)[['params','rank_test_score','mean_test_score']].sort_values(by=['rank_test_score'])
     timeSVM = time.time() - timeSVM
