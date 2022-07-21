@@ -24,7 +24,8 @@ Matriz de custo Regressao Logistica:
 2 & 0 & 24 & 3 & 1 & 249 & 39 & 13 & 134 & 735 \\
 
 Score Regressao Logistica:  0.85833333
-Tempo Regressao Logistica:  316.61
+Tempo Regressao Logistica:  315.19
+
 Ordenacao dos scores SVM:
 1 & 100.00 & sigmoid & 0.4117 \\
 
@@ -41,15 +42,16 @@ Matriz de custo SVM:
 0 & 0 & 0 & 0 & 0 & 19 & 0 & 42 & 0 & 1139 \\
 
 Score SVM:  0.43875000
-Tempo SVM:  664.31
-Score do modelo final:  0.84600000 
-Acuracia Ein test:  0.84600000 
-Acuracia Eout test:  0.15400000 
-Acuracia Ein validacao:  0.85833333 
-Precisao Ein test:  0.84445574 
-Precisao Eout test:  0.85700670 
-kappa test:  0.84600000 
-kappa validacao:  0.85833333 
+Tempo SVM:  661.41
+
+Score do modelo final:  0.84600000
+Acuracia Ein test:  0.84600000
+Acuracia Eout test:  0.15400000
+Acuracia Ein validacao:  0.85833333
+Precisao Ein test:  0.84445574
+Precisao Eout test:  0.85700670
+kappa test:  0.84600000
+kappa validacao:  0.85833333
 
 Matriz de custo modelo final:
 814 & 1 & 15 & 48 & 3 & 4 & 104 & 0 & 11 & 0 \\
@@ -65,14 +67,14 @@ Matriz de custo modelo final:
 
 Re-treinamento:
 
-Score do modelo final:  0.84610000 
-Acuracia Ein test:  0.84610000 
-Acuracia Eout test:  0.15390000 
-Acuracia Ein validacao:  0.87166667 
-Precisao Ein test:  0.84486093 
-Precisao Eout test:  0.87075403 
-kappa test:  0.84610000 
-kappa validacao:  0.87166667 
+Score do modelo final:  0.84610000
+Acuracia Ein test:  0.84610000
+Acuracia Eout test:  0.15390000
+Acuracia Ein validacao:  0.87166667
+Precisao Ein test:  0.84486093
+Precisao Eout test:  0.87075403
+kappa test:  0.84610000
+kappa validacao:  0.87166667
 
 Matriz de custo modelo re-treinado:
 811 & 1 & 16 & 52 & 4 & 4 & 102 & 0 & 10 & 0 \\
