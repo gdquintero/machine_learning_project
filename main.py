@@ -158,7 +158,7 @@ def test(ntest,trainSize,x_train,y_train,x_test,y_test):
     modelLR = LogisticRegression()
     solversLR = ['newton-cg','lbfgs', 'liblinear'] 
     rowTableLR = len(solversLR)
-    cLR = [1.0, 0.1, 0.01] 
+    cLR = [1000.0,500.0,100.0,50.0,10.0,5.0,1.0,0.1,0.01,0.001] 
     rowTableLR = rowTableLR * len(cLR)
     gridLR = dict(solver=solversLR,C=cLR,random_state=[4])
 
@@ -178,9 +178,9 @@ def test(ntest,trainSize,x_train,y_train,x_test,y_test):
     print("\nAjuste do modelo usando SVM")
     print("---------------------------")
     modelSVM = SVC()
-    kernelSVM = ['sigmoid']
+    kernelSVM = ['poli', 'rbf', 'sigmoid']
     rowTableSVM = len(kernelSVM)
-    cSVM = [100.0] 
+    cSVM = [1000.0,500.0,100.0,50.0,10.0,5.0,1.0,0.1,0.01,0.001] 
     rowTableSVM = rowTableSVM * len(cSVM)
     gridSVM = dict(kernel=kernelSVM,C=cSVM,random_state=[4])
 
@@ -293,26 +293,26 @@ print("-------------------")
 test(1,0.80,xTrain,yTrain,xTest,yTest)
 testTimes[0] = time.time() - testTimes[0]
 
-# testTimes[1] = time.time()
-# print("\n-------------------")
-# print("Execucao do teste 2")
-# print("-------------------")
-# test(2,0.75,xTrain,yTrain,xTest,yTest)
-# testTimes[1] = time.time() - testTimes[1]
+testTimes[1] = time.time()
+print("\n-------------------")
+print("Execucao do teste 2")
+print("-------------------")
+test(2,0.75,xTrain,yTrain,xTest,yTest)
+testTimes[1] = time.time() - testTimes[1]
 
-# testTimes[2] = time.time()
-# print("\n-------------------")
-# print("Execucao do teste 3")
-# print("-------------------")
-# test(3,0.80,xTrainReduced,yTrain,xTestReduced,yTest)
-# testTimes[2] = time.time() - testTimes[2]
+testTimes[2] = time.time()
+print("\n-------------------")
+print("Execucao do teste 3")
+print("-------------------")
+test(3,0.80,xTrainReduced,yTrain,xTestReduced,yTest)
+testTimes[2] = time.time() - testTimes[2]
 
-# testTimes[3] = time.time()
-# print("\n-------------------")
-# print("Execucao do teste 4")
-# print("-------------------")
-# test(4,0.75,xTrainReduced,yTrain,xTestReduced,yTest)
-# testTimes[3] = time.time() - testTimes[3]
+testTimes[3] = time.time()
+print("\n-------------------")
+print("Execucao do teste 4")
+print("-------------------")
+test(4,0.75,xTrainReduced,yTrain,xTestReduced,yTest)
+testTimes[3] = time.time() - testTimes[3]
 
 totalTime = time.time() - totalTime
 
