@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from inspect import Parameter
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 import pandas as pd
 import sklearn as skl
 import tensorflow as tf
-import os
 import time
 import pathlib
 import warnings
@@ -16,7 +13,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
-from sklearn.neural_network import MLPClassifier
 
 print("------------------")
 print("Inicio do programa")
@@ -25,7 +21,6 @@ print("Versao do Python: ", __import__("platform").python_version())
 print("Versao da biblioteca Numpy: ", np.__version__)
 print("Versao da biblioteca Matplotlib: ", np.__version__)
 print("Versao da biblioteca Pandas: ", pd.__version__)
-print("Versao da biblioteca Seaborn: ", np.__version__)
 print("Versao da biblioteca Tensorflow: ", tf.__version__)
 print("Versao da biblioteca Scikit-learn: ", skl.__version__)
 
@@ -37,43 +32,39 @@ localPath = pathlib.Path(__file__).parent.resolve()
 def export(test,yVal,yPredLR,yPredSVM,yTest,testPredFinal,testPredFinalTotal,dataFrameLR,dataFrameSVM,nLR,nSVM,outparam):
     with open('test'+str(test),'w') as f:
         f.write("%s %i\n" % ('Test ',test))
-        f.write("\n")
-        f.write("Ordenacao dos scores Regressao Logistica:\n")
+        f.write("\nOrdenacao dos scores Regressao Logistica:\n")
         for i in range(nLR):
             C = dataFrameLR.at[i,'params']['C']
             solver = dataFrameLR.at[i,'params']['solver']
             mScore = dataFrameLR.at[i,'mean_test_score']
             f.write("%i %s %3.2f %s %s %s %1.4f %s" % (i+1,'&',C,'&',solver,'&',mScore,'\\\\\n'))
-        f.write("\n")
 
-        f.write("Matriz de custo Regressao Logistica:\n")
+        f.write("\nMatriz de custo Regressao Logistica:\n")
         cm = skl.metrics.confusion_matrix(yVal,yPredSVM)
         for i in range(10):
             f.write("%i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s" \
             % (cm[i,0],'&',cm[i,1],'&',cm[i,2],'&',cm[i,3],'&',cm[i,4],'&',cm[i,5],'&',cm[i,6], \
             '&',cm[i,7],'&',cm[i,8],'&',cm[i,9],'\\\\\n'))
-        f.write("\n")
-        f.write("%s %1.8f" % ("Score Regressao Logistica: ",outparam[0]))
-        f.write("%s %4.2f" % ("Tempo Regressao Logistia: ",times[0]))
+     
+        f.write("%s %1.8f" % ("\nScore Regressao Logistica: ",outparam[0]))
+        f.write("%s %4.2f" % ("\nTempo Regressao Logistica: ",times[0]))
 
-        f.write("\n")
-        f.write("Ordenacao dos scores SVM:\n")
+        f.write("\nOrdenacao dos scores SVM:\n")
         for i in range(nSVM):
             C = dataFrameSVM.at[i,'params']['C']
             solver = dataFrameSVM.at[i,'params']['kernel']
             mScore = dataFrameSVM.at[i,'mean_test_score']
             f.write("%i %s %3.2f %s %s %s %1.4f %s" % (i+1,'&',C,'&',solver,'&',mScore,'\\\\\n'))
-        f.write("\n")
 
-        f.write("Matriz de custo SVM:\n")
+        f.write("\nMatriz de custo SVM:\n")
         cm = skl.metrics.confusion_matrix(yVal,yPredLR)
         for i in range(10):
             f.write("%i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s" \
             % (cm[i,0],'&',cm[i,1],'&',cm[i,2],'&',cm[i,3],'&',cm[i,4],'&',cm[i,5],'&',cm[i,6], \
             '&',cm[i,7],'&',cm[i,8],'&',cm[i,9],'\\\\\n'))
-        f.write("\n")
-        f.write("%s %1.8f" % ("Score SVM: ",outparam[1]))
-        f.write("%s %4.2f" % ("Tempo SVM: ",times[1]))
+        
+        f.write("%s %1.8f" % ("\nScore SVM: ",outparam[1]))
+        f.write("%s %4.2f" % ("\nTempo SVM: ",times[1]))
 
         f.write("\n")
         f.write("%s %1.8f %s" % ("Score do modelo final: ",outparam[2],"\n"))
@@ -84,17 +75,15 @@ def export(test,yVal,yPredLR,yPredSVM,yTest,testPredFinal,testPredFinalTotal,dat
         f.write("%s %1.8f %s" % ("Precisao Eout test: ",outparam[7],"\n"))
         f.write("%s %1.8f %s" % ("kappa test: ",outparam[8],"\n"))        
         f.write("%s %1.8f %s" % ("kappa validacao: ",outparam[9],"\n"))  
-        f.write("\n")
 
-        f.write("Matriz de custo modelo final:\n")
+        f.write("\nMatriz de custo modelo final:\n")
         cm = skl.metrics.confusion_matrix(yTest,testPredFinal)
         for i in range(10):
             f.write("%i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s" \
             % (cm[i,0],'&',cm[i,1],'&',cm[i,2],'&',cm[i,3],'&',cm[i,4],'&',cm[i,5],'&',cm[i,6], \
             '&',cm[i,7],'&',cm[i,8],'&',cm[i,9],'\\\\\n'))
-        f.write("\n")
 
-        f.write("Re-treinamento:\n")
+        f.write("\nRe-treinamento:\n")
         f.write("\n")
 
         f.write("%s %1.8f %s" % ("Score do modelo final: ",outparam[10],"\n"))
@@ -105,9 +94,8 @@ def export(test,yVal,yPredLR,yPredSVM,yTest,testPredFinal,testPredFinalTotal,dat
         f.write("%s %1.8f %s" % ("Precisao Eout test: ",outparam[15],"\n"))
         f.write("%s %1.8f %s" % ("kappa test: ",outparam[16],"\n"))        
         f.write("%s %1.8f %s" % ("kappa validacao: ",outparam[17],"\n")) 
-        f.write("\n")
 
-        f.write("Matriz de custo modelo re-treinado:\n")
+        f.write("\nMatriz de custo modelo re-treinado:\n")
         cm = skl.metrics.confusion_matrix(yTest,testPredFinalTotal)
         for i in range(10):
             f.write("%i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s %i %s" \
@@ -325,10 +313,10 @@ totalTime = time.time() - totalTime
 print("Tempo total: ",round(totalTime/60,2)," minutos ou",round(totalTime/3600,2)," horas.")
 
 with open('totalTime','w') as f:
-    f.write("%s %4.2f" % ("Tempo do teste 1: ",testTimes[0]))
-    f.write("%s %4.2f" % ("Tempo do teste 2: ",testTimes[1]))
-    f.write("%s %4.2f" % ("Tempo do teste 3: ",testTimes[2]))
-    f.write("%s %4.2f" % ("Tempo do teste 4: ",testTimes[3]))
+    f.write("%s %4.2f %s" % ("Tempo do teste 1: ",testTimes[0],"\n"))
+    f.write("%s %4.2f %s" % ("Tempo do teste 2: ",testTimes[1],"\n"))
+    f.write("%s %4.2f %s" % ("Tempo do teste 3: ",testTimes[2],"\n"))
+    f.write("%s %4.2f %s" % ("Tempo do teste 4: ",testTimes[3],"\n"))
     f.write("%s %4.2f" % ("Tempo total de todos os testes: ",totalTime))
 
 f.close()

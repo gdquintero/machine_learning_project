@@ -15,7 +15,8 @@ Matriz de custo Regressao Logistica:
 32 & 34 & 404 & 10 & 172 & 12 & 20 & 9 & 806 & 1 \\
 4 & 2 & 88 & 1 & 8 & 302 & 1 & 49 & 324 & 721 \\
 
-Score Regressao Logistica:  0.81026667Tempo Regressao Logistia:  7.03
+Score Regressao Logistica:  0.81026667
+Tempo Regressao Logistica:  7.04
 Ordenacao dos scores SVM:
 1 & 100.00 & sigmoid & 0.3897 \\
 
@@ -31,7 +32,8 @@ Matriz de custo SVM:
 2 & 0 & 6 & 21 & 6 & 17 & 37 & 12 & 1396 & 3 \\
 1 & 0 & 1 & 0 & 0 & 29 & 0 & 67 & 0 & 1402 \\
 
-Score SVM:  0.41440000Tempo SVM:  241.74
+Score SVM:  0.41440000
+Tempo SVM:  242.62
 Score do modelo final:  0.80010000 
 Acuracia Ein test:  0.80010000 
 Acuracia Eout test:  0.19990000 
