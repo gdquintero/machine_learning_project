@@ -150,9 +150,9 @@ def test(ntest,trainSize,x_train,y_train,x_test,y_test):
     print("\nAjuste do modelo usando Regressao Logistica")
     print("-------------------------------------------")
     modelLR = LogisticRegression()
-    solversLR = ['lbfgs']
+    solversLR = ['newton-cg','lbfgs', 'liblinear'] 
     rowTableLR = len(solversLR)
-    cLR = [0.01] 
+    cLR = [1.0, 0.1, 0.01] 
     rowTableLR = rowTableLR * len(cLR)
     gridLR = dict(solver=solversLR,C=cLR,random_state=[4])
 
@@ -294,19 +294,19 @@ print("-------------------")
 test(2,0.75,xTrain,yTrain,xTest,yTest)
 testTimes[1] = time.time() - testTimes[1]
 
-testTimes[2] = time.time()
-print("\n-------------------")
-print("Execucao do teste 3")
-print("-------------------")
-test(3,0.80,xTrainReduced,yTrain,xTestReduced,yTest)
-testTimes[2] = time.time() - testTimes[2]
+# testTimes[2] = time.time()
+# print("\n-------------------")
+# print("Execucao do teste 3")
+# print("-------------------")
+# test(3,0.80,xTrainReduced,yTrain,xTestReduced,yTest)
+# testTimes[2] = time.time() - testTimes[2]
 
-testTimes[3] = time.time()
-print("\n-------------------")
-print("Execucao do teste 4")
-print("-------------------")
-test(4,0.75,xTrainReduced,yTrain,xTestReduced,yTest)
-testTimes[3] = time.time() - testTimes[3]
+# testTimes[3] = time.time()
+# print("\n-------------------")
+# print("Execucao do teste 4")
+# print("-------------------")
+# test(4,0.75,xTrainReduced,yTrain,xTestReduced,yTest)
+# testTimes[3] = time.time() - testTimes[3]
 
 totalTime = time.time() - totalTime
 
