@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+from queue import Empty
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -254,15 +255,104 @@ print("\nCarregando o dataset: Fashion mnist")
 print("-----------------------------------")
 (xTrain, yTrain), (xTest, yTest) = tf.keras.datasets.fashion_mnist.load_data()
 
+xTrainUnbalanced = np.copy(xTrain)
+yTrainUnbalanced = np.copy(yTrain)
+
+
+# Desbalanceando as classes 1 e 2
 aux = np.empty((6000,28,28))
+ind = np.empty((6000),dtype=int)
+j = 0
 k = 0
 
 for i in range(60000):
     if yTrain[i] == 1:
-        aux[k,:,:] = xTrain[i,:,:]
-        k += 1
+        aux[j,:,:] = xTrain[i,:,:]
+        j += 1
 
-print(aux[:,0,0])
+    if yTrain[i] == 1:
+        ind[k] = i
+        k += 1  
+
+for i in range(1000):
+    yTrainUnbalanced[ind[i]] = 0
+    xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
+
+# Desbalanceando as classes 3 e 4
+aux[:,:,:] = 0
+ind[:] = 0
+j = 0
+k = 0
+
+for i in range(60000):
+    if yTrain[i] == 3:
+        aux[j,:,:] = xTrain[i,:,:]
+        j += 1
+
+    if yTrain[i] == 4:
+        ind[k] = i
+        k += 1  
+
+for i in range(500):
+    yTrainUnbalanced[ind[i]] = 0
+    xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
+
+# Desbalanceando as clases 5 e 6
+aux[:,:,:] = 0
+ind[:] = 0
+j = 0
+k = 0
+
+for i in range(60000):
+    if yTrain[i] == 5:
+        aux[j,:,:] = xTrain[i,:,:]
+        j += 1
+
+    if yTrain[i] == 6:
+        ind[k] = i
+        k += 1  
+
+for i in range(1000):
+    yTrainUnbalanced[ind[i]] = 0
+    xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
+
+# Desbalanceando as clases 7 e 8
+aux[:,:,:] = 0
+ind[:] = 0
+j = 0
+k = 0
+
+for i in range(60000):
+    if yTrain[i] == 7:
+        aux[j,:,:] = xTrain[i,:,:]
+        j += 1
+
+    if yTrain[i] == 8:
+        ind[k] = i
+        k += 1  
+
+for i in range(1000):
+    yTrainUnbalanced[ind[i]] = 0
+    xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
+
+# Desbalanceando as clases 9 e 10
+aux[:,:,:] = 0
+ind[:] = 0
+j = 0
+k = 0
+
+for i in range(60000):
+    if yTrain[i] == 9:
+        aux[j,:,:] = xTrain[i,:,:]
+        j += 1
+
+    if yTrain[i] == 10:
+        ind[k] = i
+        k += 1  
+
+for i in range(1000):
+    yTrainUnbalanced[ind[i]] = 0
+    xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
 
 
 # xTrainReduced = np.array([image[::2, 1::2] for image in xTrain])
@@ -286,5 +376,5 @@ sprite = {
         9: 'Ankle boot'
     }
 
-getFrequency(yTrain,yTest,kind='Test')
+getFrequency(yTrainUnbalanced,yTest,kind='Test')
 getImages(xTrain,yTrain)
