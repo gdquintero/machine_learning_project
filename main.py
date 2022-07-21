@@ -161,9 +161,9 @@ def test(ntest,trainSize,x_train,y_train,x_test,y_test):
     print("\nAjuste do modelo usando Regressao Logistica")
     print("-------------------------------------------")
     modelLR = LogisticRegression()
-    solversLR = ['newton-cg','lbfgs', 'liblinear'] 
+    solversLR = ['newton-cg','lbfgs','lbfgs'] 
     rowTableLR = len(solversLR)
-    cLR = [1000.0,500.0,100.0,50.0,10.0,5.0,1.0,0.1,0.01,0.001] 
+    cLR = [100.0,10.0,1.0,0.1,0.01]  
     rowTableLR = rowTableLR * len(cLR)
     gridLR = dict(solver=solversLR,C=cLR,random_state=[4])
 
@@ -183,9 +183,9 @@ def test(ntest,trainSize,x_train,y_train,x_test,y_test):
     print("\nAjuste do modelo usando SVM")
     print("---------------------------")
     modelSVM = SVC()
-    kernelSVM = ['poli', 'rbf', 'sigmoid']
+    kernelSVM = ['linear','rbf','sigmoid']
     rowTableSVM = len(kernelSVM)
-    cSVM = [1000.0,500.0,100.0,50.0,10.0,5.0,1.0,0.1,0.01,0.001] 
+    cSVM = [100.0,10.0,1.0,0.1,0.01] 
     rowTableSVM = rowTableSVM * len(cSVM)
     gridSVM = dict(kernel=kernelSVM,C=cSVM,random_state=[4])
 
