@@ -258,27 +258,26 @@ print("-----------------------------------")
 xTrainUnbalanced = np.copy(xTrain)
 yTrainUnbalanced = np.copy(yTrain)
 
-
-# Desbalanceando as classes 1 e 2
+# Desbalanceando as classes 0 e 2
 aux = np.empty((6000,28,28))
 ind = np.empty((6000),dtype=int)
 j = 0
 k = 0
 
 for i in range(60000):
-    if yTrain[i] == 1:
+    if yTrain[i] == 0:
         aux[j,:,:] = xTrain[i,:,:]
         j += 1
 
-    if yTrain[i] == 1:
+    if yTrain[i] == 2:
         ind[k] = i
         k += 1  
 
-for i in range(1000):
+for i in range(3000):
     yTrainUnbalanced[ind[i]] = 0
     xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
 
-# Desbalanceando as classes 3 e 4
+# Desbalanceando as classes 3 e 5
 aux[:,:,:] = 0
 ind[:] = 0
 j = 0
@@ -289,41 +288,22 @@ for i in range(60000):
         aux[j,:,:] = xTrain[i,:,:]
         j += 1
 
-    if yTrain[i] == 4:
-        ind[k] = i
-        k += 1  
-
-for i in range(500):
-    yTrainUnbalanced[ind[i]] = 0
-    xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
-
-# Desbalanceando as clases 5 e 6
-aux[:,:,:] = 0
-ind[:] = 0
-j = 0
-k = 0
-
-for i in range(60000):
     if yTrain[i] == 5:
-        aux[j,:,:] = xTrain[i,:,:]
-        j += 1
-
-    if yTrain[i] == 6:
         ind[k] = i
         k += 1  
 
-for i in range(1000):
-    yTrainUnbalanced[ind[i]] = 0
+for i in range(3000):
+    yTrainUnbalanced[ind[i]] = 3
     xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
 
-# Desbalanceando as clases 7 e 8
+# Desbalanceando as clases 6 e 8
 aux[:,:,:] = 0
 ind[:] = 0
 j = 0
 k = 0
 
 for i in range(60000):
-    if yTrain[i] == 7:
+    if yTrain[i] == 6:
         aux[j,:,:] = xTrain[i,:,:]
         j += 1
 
@@ -331,28 +311,47 @@ for i in range(60000):
         ind[k] = i
         k += 1  
 
-for i in range(1000):
-    yTrainUnbalanced[ind[i]] = 0
+for i in range(3000):
+    yTrainUnbalanced[ind[i]] = 6
     xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
 
-# Desbalanceando as clases 9 e 10
-aux[:,:,:] = 0
-ind[:] = 0
-j = 0
-k = 0
+# # Desbalanceando as clases 7 e 8
+# aux[:,:,:] = 0
+# ind[:] = 0
+# j = 0
+# k = 0
 
-for i in range(60000):
-    if yTrain[i] == 9:
-        aux[j,:,:] = xTrain[i,:,:]
-        j += 1
+# for i in range(60000):
+#     if yTrain[i] == 7:
+#         aux[j,:,:] = xTrain[i,:,:]
+#         j += 1
 
-    if yTrain[i] == 10:
-        ind[k] = i
-        k += 1  
+#     if yTrain[i] == 8:
+#         ind[k] = i
+#         k += 1  
 
-for i in range(1000):
-    yTrainUnbalanced[ind[i]] = 0
-    xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
+# for i in range(1000):
+#     yTrainUnbalanced[ind[i]] = 0
+#     xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
+
+# # Desbalanceando as clases 9 e 10
+# aux[:,:,:] = 0
+# ind[:] = 0
+# j = 0
+# k = 0
+
+# for i in range(60000):
+#     if yTrain[i] == 9:
+#         aux[j,:,:] = xTrain[i,:,:]
+#         j += 1
+
+#     if yTrain[i] == 10:
+#         ind[k] = i
+#         k += 1  
+
+# for i in range(1000):
+#     yTrainUnbalanced[ind[i]] = 0
+#     xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
 
 
 # xTrainReduced = np.array([image[::2, 1::2] for image in xTrain])

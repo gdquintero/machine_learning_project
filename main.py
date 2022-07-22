@@ -161,7 +161,7 @@ def test(ntest,trainSize,x_train,y_train,x_test,y_test):
     print("\nAjuste do modelo usando Regressao Logistica")
     print("-------------------------------------------")
     modelLR = LogisticRegression()
-    solversLR = ['newton-cg','lbfgs','lbfgs'] 
+    solversLR = ['newton-cg','lbfgs'] 
     rowTableLR = len(solversLR)
     cLR = [100.0,10.0,1.0,0.1,0.01]  
     rowTableLR = rowTableLR * len(cLR)
@@ -183,7 +183,7 @@ def test(ntest,trainSize,x_train,y_train,x_test,y_test):
     print("\nAjuste do modelo usando SVM")
     print("---------------------------")
     modelSVM = SVC()
-    kernelSVM = ['linear','rbf','sigmoid']
+    kernelSVM = ['linear','rbf']
     rowTableSVM = len(kernelSVM)
     cSVM = [100.0,10.0,1.0,0.1,0.01] 
     rowTableSVM = rowTableSVM * len(cSVM)
