@@ -273,7 +273,7 @@ for i in range(60000):
         ind[k] = i
         k += 1  
 
-for i in range(3000):
+for i in range(1000):
     yTrainUnbalanced[ind[i]] = 0
     xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
 
@@ -292,7 +292,7 @@ for i in range(60000):
         ind[k] = i
         k += 1  
 
-for i in range(3000):
+for i in range(1000):
     yTrainUnbalanced[ind[i]] = 3
     xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
 
@@ -311,55 +311,16 @@ for i in range(60000):
         ind[k] = i
         k += 1  
 
-for i in range(3000):
+for i in range(1000):
     yTrainUnbalanced[ind[i]] = 6
     xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
 
-# # Desbalanceando as clases 7 e 8
-# aux[:,:,:] = 0
-# ind[:] = 0
-# j = 0
-# k = 0
+xTrainReduced = np.array([image[::2, 1::2] for image in xTrain])
+xTestReduced = np.array([image[::2, 1::2] for image in xTest])
 
-# for i in range(60000):
-#     if yTrain[i] == 7:
-#         aux[j,:,:] = xTrain[i,:,:]
-#         j += 1
-
-#     if yTrain[i] == 8:
-#         ind[k] = i
-#         k += 1  
-
-# for i in range(1000):
-#     yTrainUnbalanced[ind[i]] = 0
-#     xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
-
-# # Desbalanceando as clases 9 e 10
-# aux[:,:,:] = 0
-# ind[:] = 0
-# j = 0
-# k = 0
-
-# for i in range(60000):
-#     if yTrain[i] == 9:
-#         aux[j,:,:] = xTrain[i,:,:]
-#         j += 1
-
-#     if yTrain[i] == 10:
-#         ind[k] = i
-#         k += 1  
-
-# for i in range(1000):
-#     yTrainUnbalanced[ind[i]] = 0
-#     xTrainUnbalanced[ind[i],:,:] = aux[i,:,:]
-
-
-# xTrainReduced = np.array([image[::2, 1::2] for image in xTrain])
-# xTestReduced = np.array([image[::2, 1::2] for image in xTest])
-
-print("Numero de amostras para treinamento: ",xTrain.shape[0])
-print("Numero de amostras para teste: ",xTest.shape[0])
-print("Tamanho de cada amostra: ",xTrain[0,:,:].shape," pixels de escala de cinza")
+print("Numero de amostras reduzidas para treinamento: ",xTrainReduced.shape[0])
+print("Numero de amostras para teste: ",xTestReduced.shape[0])
+print("Tamanho de cada amostra: ",xTrainReduced[0,:,:].shape," pixels de escala de cinza")
 # print("Tamanho de cada amostra reduzida: ",xTrainReduced[0,:,:].shape," pixels de escala de cinza")
 
 sprite = {
@@ -377,3 +338,40 @@ sprite = {
 
 getFrequency(yTrainUnbalanced,yTest,kind='Test')
 getImages(xTrain,yTrain)
+
+xTrainReduced = (xTrainReduced/255.0).astype('float32').reshape((60000,14*14))
+xTestReduced = (xTestReduced/255.0).astype('float32').reshape((10000,14*14))
+
+N, d = xTrainReduced.shape
+index = np.arange(N)
+output = np.empty(18)
+times = np.zeros(2)
+testTimes = np.zeros(2)
+
+
+testTimes[0] = time.time()
+print("\n-------------------")
+print("Execucao do teste 1")
+print("-------------------")
+test(1,0.80,xTrainReduced,yTrain,xTestReduced,yTest)
+testTimes[0] = time.time() - testTimes[0]
+open('Teste_3_finalizado','w').close()
+
+testTimes[1] = time.time()
+print("\n-------------------")
+print("Execucao do teste 2")
+print("-------------------")
+test(2,0.75,xTrainReduced,yTrain,xTestReduced,yTest)
+testTimes[1] = time.time() - testTimes[1]
+open('Teste_4_finalizado','w').close()
+
+totalTime = time.time() - totalTime
+
+print("Tempo total: ",round(totalTime/60,2)," minutos ou",round(totalTime/3600,2)," horas.")
+
+with open('totalTime','w') as f:
+    f.write("%s %4.2f %s" % ("Tempo do teste 1: ",testTimes[0],"\n"))
+    f.write("%s %4.2f %s" % ("Tempo do teste 2: ",testTimes[1],"\n"))
+    f.write("%s %4.2f" % ("Tempo total de todos os testes: ",totalTime))
+
+f.close()
