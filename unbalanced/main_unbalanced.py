@@ -162,7 +162,7 @@ def test(ntest,trainSize,x_train,y_train,x_test,y_test):
     print("\nAjuste do modelo usando Regressao Logistica")
     print("-------------------------------------------")
     modelLR = LogisticRegression()
-    solversLR = ['newton-cg','lbfgs','lbfgs'] 
+    solversLR = ['newton-cg','lbfgs'] 
     rowTableLR = len(solversLR)
     cLR = [100.0,10.0,1.0,0.1,0.01]  
     rowTableLR = rowTableLR * len(cLR)
@@ -184,7 +184,7 @@ def test(ntest,trainSize,x_train,y_train,x_test,y_test):
     print("\nAjuste do modelo usando SVM")
     print("---------------------------")
     modelSVM = SVC()
-    kernelSVM = ['linear','rbf','sigmoid']
+    kernelSVM = ['linear','rbf']
     rowTableSVM = len(kernelSVM)
     cSVM = [100.0,10.0,1.0,0.1,0.01] 
     rowTableSVM = rowTableSVM * len(cSVM)
@@ -355,7 +355,7 @@ print("Execucao do teste 1")
 print("-------------------")
 test(1,0.80,xTrainReduced,yTrain,xTestReduced,yTest)
 testTimes[0] = time.time() - testTimes[0]
-open('Teste_3_finalizado','w').close()
+open('Teste_1_finalizado','w').close()
 
 testTimes[1] = time.time()
 print("\n-------------------")
@@ -363,7 +363,7 @@ print("Execucao do teste 2")
 print("-------------------")
 test(2,0.75,xTrainReduced,yTrain,xTestReduced,yTest)
 testTimes[1] = time.time() - testTimes[1]
-open('Teste_4_finalizado','w').close()
+open('Teste_2_finalizado','w').close()
 
 totalTime = time.time() - totalTime
 

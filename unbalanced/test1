@@ -3,19 +3,14 @@ Test  1
 Ordenacao dos scores Regressao Logistica:
 1 & 100.00 & newton-cg & 0.8257 \\
 2 & 100.00 & lbfgs & 0.8254 \\
-3 & 100.00 & lbfgs & 0.8254 \\
-4 & 10.00 & newton-cg & 0.8268 \\
-5 & 10.00 & lbfgs & 0.8250 \\
-6 & 10.00 & lbfgs & 0.8250 \\
-7 & 1.00 & newton-cg & 0.8277 \\
-8 & 1.00 & lbfgs & 0.8261 \\
-9 & 1.00 & lbfgs & 0.8261 \\
-10 & 0.10 & newton-cg & 0.8250 \\
-11 & 0.10 & lbfgs & 0.8241 \\
-12 & 0.10 & lbfgs & 0.8241 \\
-13 & 0.01 & newton-cg & 0.8053 \\
-14 & 0.01 & lbfgs & 0.8052 \\
-15 & 0.01 & lbfgs & 0.8052 \\
+3 & 10.00 & newton-cg & 0.8268 \\
+4 & 10.00 & lbfgs & 0.8250 \\
+5 & 1.00 & newton-cg & 0.8277 \\
+6 & 1.00 & lbfgs & 0.8261 \\
+7 & 0.10 & newton-cg & 0.8250 \\
+8 & 0.10 & lbfgs & 0.8241 \\
+9 & 0.01 & newton-cg & 0.8053 \\
+10 & 0.01 & lbfgs & 0.8052 \\
 
 Matriz de custo Regressao Logistica:
 1046 & 2 & 14 & 31 & 2 & 1 & 96 & 0 & 8 & 0 \\
@@ -30,24 +25,19 @@ Matriz de custo Regressao Logistica:
 0 & 0 & 0 & 0 & 0 & 8 & 0 & 40 & 0 & 1152 \\
 
 Score Regressao Logistica:  0.83091667
-Tempo Regressao Logistica:  573.47
+Tempo Regressao Logistica:  515.18
 
 Ordenacao dos scores SVM:
 1 & 100.00 & linear & 0.8308 \\
 2 & 100.00 & rbf & 0.8747 \\
-3 & 100.00 & sigmoid & 0.4026 \\
-4 & 10.00 & linear & 0.8329 \\
-5 & 10.00 & rbf & 0.8808 \\
-6 & 10.00 & sigmoid & 0.4073 \\
-7 & 1.00 & linear & 0.8365 \\
-8 & 1.00 & rbf & 0.8650 \\
-9 & 1.00 & sigmoid & 0.4075 \\
-10 & 0.10 & linear & 0.8351 \\
-11 & 0.10 & rbf & 0.8234 \\
-12 & 0.10 & sigmoid & 0.4298 \\
-13 & 0.01 & linear & 0.8185 \\
-14 & 0.01 & rbf & 0.7579 \\
-15 & 0.01 & sigmoid & 0.4991 \\
+3 & 10.00 & linear & 0.8329 \\
+4 & 10.00 & rbf & 0.8808 \\
+5 & 1.00 & linear & 0.8365 \\
+6 & 1.00 & rbf & 0.8650 \\
+7 & 0.10 & linear & 0.8351 \\
+8 & 0.10 & rbf & 0.8234 \\
+9 & 0.01 & linear & 0.8185 \\
+10 & 0.01 & rbf & 0.7579 \\
 
 Matriz de custo SVM:
 977 & 12 & 18 & 55 & 12 & 4 & 103 & 1 & 18 & 0 \\
@@ -62,7 +52,7 @@ Matriz de custo SVM:
 0 & 0 & 0 & 0 & 0 & 19 & 0 & 52 & 0 & 1129 \\
 
 Score SVM:  0.88900000
-Tempo SVM:  6310.19
+Tempo SVM:  3701.47
 
 Score do modelo final:  0.87520000
 Acuracia Ein test:  0.87520000
